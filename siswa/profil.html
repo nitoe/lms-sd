@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Saya — LMS SD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --blue:#3B82F6;--green:#22C55E;--yellow:#F59E0B;--coral:#FF6B6B;--purple:#A855F7;--bg:#EEF6FF;--white:#fff;--text:#1E293B;--muted:#64748B;--border:#E2E8F0; }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; }
+
+    /* TOPBAR */
+    .topbar { background:linear-gradient(135deg,#22C55E,#16A34A); padding:0 24px; height:58px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(34,197,94,.3); }
+    .topbar-left { display:flex; align-items:center; gap:14px; }
+    .topbar a { color:rgba(255,255,255,.8); text-decoration:none; font-size:14px; font-weight:700; }
+    .topbar a:hover { color:#fff; }
+    .topbar h1 { font-family:'Fredoka One',cursive; color:#fff; font-size:20px; }
+    .btn-logout { background:rgba(255,255,255,.2); color:#fff; border:none; padding:7px 16px; border-radius:8px; font-family:'Nunito',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
+
+    /* PROFILE HERO */
+    .profile-hero { background:linear-gradient(135deg,#A855F7,#7C3AED); padding:32px 24px 60px; text-align:center; position:relative; overflow:hidden; }
+    .profile-hero::before { content:''; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    .profile-hero::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:36px; background:var(--bg); border-radius:36px 36px 0 0; }
+    .avatar-circle { width:90px; height:90px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-size:50px; margin:0 auto 12px; border:3px solid rgba(255,255,255,.4); position:relative; z-index:1; }
+    .profile-nama { font-family:'Fredoka One',cursive; font-size:24px; color:#fff; margin-bottom:4px; position:relative; z-index:1; }
+    .profile-kelas { color:rgba(255,255,255,.8); font-size:14px; font-weight:600; position:relative; z-index:1; }
+    .level-badge { display:inline-block; background:rgba(255,255,255,.2); color:#fff; padding:6px 18px; border-radius:20px; font-size:13px; font-weight:800; margin-top:10px; position:relative; z-index:1; backdrop-filter:blur(4px); }
+
+    /* CONTAINER */
+    .container { max-width:860px; margin:0 auto; padding:24px 20px 48px; }
+
+    /* STAT CARDS */
+    .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+    .stat-card { background:var(--white); border-radius:18px; padding:18px 14px; text-align:center; box-shadow:0 3px 12px rgba(0,0,0,.06); }
+    .stat-card .val { font-family:'Fredoka One',cursive; font-size:30px; margin-bottom:4px; }
+    .stat-card .lbl { font-size:12px; color:var(--muted); font-weight:700; }
+    .val-poin   { color:var(--yellow); }
+    .val-materi { color:var(--green); }
+    .val-kuis   { color:var(--blue); }
+
+    /* SECTION */
+    .section-title { font-family:'Fredoka One',cursive; font-size:20px; color:var(--text); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+
+    /* BADGE GRID */
+    .badge-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:12px; margin-bottom:28px; }
+    .badge-item { background:var(--white); border-radius:16px; padding:18px 12px; text-align:center; box-shadow:0 3px 12px rgba(0,0,0,.06); transition:.2s; }
+    .badge-item:hover { transform:translateY(-3px); }
+    .badge-item.locked { opacity:.4; filter:grayscale(1); }
+    .badge-item .b-icon { font-size:36px; margin-bottom:8px; }
+    .badge-item .b-name { font-family:'Fredoka One',cursive; font-size:13px; color:var(--text); margin-bottom:2px; }
+    .badge-item .b-desc { font-size:11px; color:var(--muted); line-height:1.3; }
+    .badge-item .b-got { display:inline-block; margin-top:6px; background:#D1FAE5; color:#065F46; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:800; }
+    .badge-item.locked .b-got { background:#F1F5F9; color:var(--muted); }
+
+    /* RIWAYAT KUIS */
+    .riwayat-list { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+    .riwayat-item { background:var(--white); border-radius:14px; padding:16px 20px; display:flex; align-items:center; gap:14px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+    .riwayat-icon { font-size:28px; flex-shrink:0; }
+    .riwayat-info { flex:1; }
+    .riwayat-info .name { font-size:14px; font-weight:700; color:var(--text); margin-bottom:3px; }
+    .riwayat-info .meta { font-size:12px; color:var(--muted); }
+    .riwayat-skor { text-align:right; }
+    .skor-num { font-family:'Fredoka One',cursive; font-size:24px; }
+    .skor-lbl { font-size:11px; color:var(--muted); font-weight:700; }
+    .skor-good { color:var(--green); }
+    .skor-mid  { color:var(--yellow); }
+    .skor-low  { color:var(--coral); }
+    .empty-box { text-align:center; padding:32px; color:var(--muted); font-size:14px; font-weight:600; background:var(--white); border-radius:14px; }
+
+    /* TIPS CARD */
+    .tips-card { background:linear-gradient(135deg,#EFF6FF,#DBEAFE); border-radius:20px; padding:22px 24px; border:2px solid #BFDBFE; }
+    .tips-card h3 { font-family:'Fredoka One',cursive; font-size:18px; color:#1E40AF; margin-bottom:10px; }
+    .tips-list { display:flex; flex-direction:column; gap:8px; }
+    .tip-item { display:flex; align-items:flex-start; gap:8px; font-size:13px; color:#1E40AF; font-weight:600; }
+
+    @media(max-width:480px) {
+      .stat-grid { grid-template-columns:1fr 1fr; }
+      .badge-grid { grid-template-columns:repeat(3,1fr); }
+      .container { padding:16px 14px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="dashboard.html">← Beranda</a>
+    <h1>🏆 Profil Saya</h1>
+  </div>
+  <button class="btn-logout" onclick="doLogout()">Keluar</button>
+</div>
+
+<!-- PROFILE HERO -->
+<div class="profile-hero">
+  <div class="avatar-circle" id="profile-avatar">🧒</div>
+  <div class="profile-nama" id="profile-nama">Memuat...</div>
+  <div class="profile-kelas" id="profile-kelas">Kelas ?</div>
+  <div class="level-badge" id="profile-level">⭐ Level 1 – Pemula</div>
+</div>
+
+<div class="container">
+
+  <!-- STATISTIK -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="val val-poin" id="stat-poin">0</div>
+      <div class="lbl">⭐ Total Poin</div>
+    </div>
+    <div class="stat-card">
+      <div class="val val-materi" id="stat-materi">0</div>
+      <div class="lbl">📖 Materi Selesai</div>
+    </div>
+    <div class="stat-card">
+      <div class="val val-kuis" id="stat-kuis">0</div>
+      <div class="lbl">🎯 Kuis Dikerjakan</div>
+    </div>
+  </div>
+
+  <!-- BADGE -->
+  <div class="section-title">🏅 Koleksi Badge</div>
+  <div class="badge-grid" id="badge-grid">
+    <div class="empty-box">⏳ Memuat badge...</div>
+  </div>
+
+  <!-- RIWAYAT KUIS -->
+  <div class="section-title">📊 Riwayat Nilai Kuis</div>
+  <div class="riwayat-list" id="riwayat-list">
+    <div class="empty-box">⏳ Memuat riwayat...</div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="tips-card">
+    <h3>💡 Tips Belajar yang Baik</h3>
+    <div class="tips-list">
+      <div class="tip-item"><span>📖</span><span>Baca materi dulu sebelum mengerjakan kuis supaya nilaimu bagus!</span></div>
+      <div class="tip-item"><span>⭐</span><span>Setiap materi selesai = +10 poin. Setiap jawaban benar di kuis = +5 poin.</span></div>
+      <div class="tip-item"><span>🏆</span><span>Kumpulkan badge dengan rajin belajar dan raih nilai tinggi di kuis!</span></div>
+      <div class="tip-item"><span>🔁</span><span>Ulangi kuis yang nilainya kurang dari 70 supaya kamu makin paham.</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+  import { db }                                    from "../assets/js/firebase-config.js";
+  import { guardSiswa, getCurrentUserData, logout } from "../assets/js/auth.js";
+  import {
+    doc, getDoc, collection, getDocs, query, where
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  guardSiswa();
+  window.doLogout = logout;
+
+  /* ── Semua badge yang ada di sistem ── */
+  const SEMUA_BADGE = [
+    { id:'belajar-pertama', icon:'🌱', nama:'Langkah Pertama',   desc:'Selesai baca materi pertama',       syarat:'1 materi selesai' },
+    { id:'rajin-belajar',   icon:'📚', nama:'Rajin Belajar',     desc:'Selesai baca 5 materi',             syarat:'5 materi selesai' },
+    { id:'kutu-buku',       icon:'🐛', nama:'Kutu Buku',         desc:'Selesai baca 10 materi',            syarat:'10 materi selesai' },
+    { id:'kuis-perdana',    icon:'✏️', nama:'Kuis Perdana',      desc:'Pertama kali mengerjakan kuis',     syarat:'1 kuis dikerjakan' },
+    { id:'nilai-bagus',     icon:'🌟', nama:'Nilai Bagus',       desc:'Mendapat nilai ≥ 80 di kuis',       syarat:'Nilai ≥ 80' },
+    { id:'nilai-sempurna',  icon:'💯', nama:'Nilai Sempurna',    desc:'Mendapat nilai 100 di kuis',        syarat:'Nilai 100' },
+    { id:'poin-100',        icon:'⭐', nama:'Pengumpul Poin',    desc:'Kumpulkan 100 poin',                syarat:'100 poin' },
+    { id:'poin-500',        icon:'🌠', nama:'Bintang Belajar',   desc:'Kumpulkan 500 poin',                syarat:'500 poin' },
+    { id:'konsisten',       icon:'🔥', nama:'Konsisten',         desc:'Kerjakan 3 kuis berbeda',           syarat:'3 kuis berbeda' },
+    { id:'juara-kelas',     icon:'🏆', nama:'Juara Kelas',       desc:'Kumpulkan 1000 poin',               syarat:'1000 poin' },
+  ];
+
+  /* ── Level system ── */
+  const LEVELS = [
+    {min:0,   max:100,  label:'Level 1 – Pemula Belajar'},
+    {min:100, max:300,  label:'Level 2 – Siswa Rajin'},
+    {min:300, max:600,  label:'Level 3 – Bintang Kelas'},
+    {min:600, max:1000, label:'Level 4 – Juara Pelajaran'},
+    {min:1000,max:99999,label:'Level 5 – Master Pengetahuan'},
+  ];
+  function getLevel(poin) {
+    return LEVELS.find(l=>poin>=l.min&&poin<l.max)||LEVELS[LEVELS.length-1];
+  }
+
+  /* ── Cek & update badge berdasarkan progres ── */
+  function cekBadgeBaru(progres) {
+    const earned    = new Set(progres.badge||[]);
+    const materi    = (progres.materi_selesai||[]).length;
+    const kuis      = Object.keys(progres.kuis_hasil||{}).length;
+    const poin      = progres.poin_total||0;
+    const nilaiList = Object.values(progres.kuis_hasil||{}).map(h=>h.skor||0);
+    const maxNilai  = nilaiList.length ? Math.max(...nilaiList) : 0;
+
+    if (materi>=1)              earned.add('belajar-pertama');
+    if (materi>=5)              earned.add('rajin-belajar');
+    if (materi>=10)             earned.add('kutu-buku');
+    if (kuis>=1)                earned.add('kuis-perdana');
+    if (maxNilai>=80)           earned.add('nilai-bagus');
+    if (maxNilai>=100)          earned.add('nilai-sempurna');
+    if (poin>=100)              earned.add('poin-100');
+    if (poin>=500)              earned.add('poin-500');
+    if (kuis>=3)                earned.add('konsisten');
+    if (poin>=1000)             earned.add('juara-kelas');
+
+    return [...earned];
+  }
+
+  async function init() {
+    const userData = await getCurrentUserData();
+    if (!userData) return;
+
+    document.getElementById('profile-nama').textContent  = userData.nama  || 'Teman';
+    document.getElementById('profile-kelas').textContent = `Kelas ${userData.kelas||'?'} — ${userData.email||''}`;
+
+    const progSnap  = await getDoc(doc(db,'progres',userData.uid));
+    const progres   = progSnap.exists() ? progSnap.data() : { poin_total:0, materi_selesai:[], kuis_hasil:{}, badge:[] };
+
+    const poin         = progres.poin_total     || 0;
+    const materiSelesai= progres.materi_selesai || [];
+    const kuisHasil    = progres.kuis_hasil     || {};
+
+    // Level
+    const level = getLevel(poin);
+    document.getElementById('profile-level').textContent = `⭐ ${level.label}`;
+
+    // Stat
+    document.getElementById('stat-poin').textContent   = poin;
+    document.getElementById('stat-materi').textContent = materiSelesai.length;
+    document.getElementById('stat-kuis').textContent   = Object.keys(kuisHasil).length;
+
+    // Badge — cek otomatis
+    const earnedIds = cekBadgeBaru(progres);
+
+    // Update badge ke Firestore jika ada badge baru
+    if (earnedIds.length > (progres.badge||[]).length) {
+      try {
+        const { updateDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        await updateDoc(doc(db,'progres',userData.uid), { badge: earnedIds });
+      } catch(e) {}
+    }
+
+    // Render badge grid
+    document.getElementById('badge-grid').innerHTML = SEMUA_BADGE.map(b => {
+      const punya = earnedIds.includes(b.id);
+      return `
+      <div class="badge-item ${punya?'':'locked'}">
+        <div class="b-icon">${b.icon}</div>
+        <div class="b-name">${b.nama}</div>
+        <div class="b-desc">${b.desc}</div>
+        <span class="b-got">${punya ? '✅ Diraih!' : '🔒 '+b.syarat}</span>
+      </div>`;
+    }).join('');
+
+    // Riwayat kuis — ambil judul dari Firestore
+    const kuisEntries = Object.entries(kuisHasil);
+    if (!kuisEntries.length) {
+      document.getElementById('riwayat-list').innerHTML =
+        `<div class="empty-box">🎯 Belum ada kuis yang dikerjakan. Ayo mulai!</div>`;
+      return;
+    }
+
+    const riwayatEl = document.getElementById('riwayat-list');
+    riwayatEl.innerHTML = '<div class="empty-box">⏳ Memuat riwayat...</div>';
+    const items = [];
+    for (const [id, hasil] of kuisEntries) {
+      try {
+        const snap = await getDoc(doc(db,'kuis',id));
+        if (snap.exists()) {
+          items.push({ judul:snap.data().judul, mapel:snap.data().mapel||'', ...hasil });
+        }
+      } catch(e) {}
+    }
+
+    if (!items.length) {
+      riwayatEl.innerHTML = `<div class="empty-box">❌ Gagal memuat riwayat.</div>`;
+      return;
+    }
+
+    riwayatEl.innerHTML = items.map(item => {
+      const cls = item.skor>=70 ? 'skor-good' : item.skor>=50 ? 'skor-mid' : 'skor-low';
+      const status = item.skor>=70 ? '✅ Lulus' : '📖 Perlu diulang';
+      return `
+      <div class="riwayat-item">
+        <div class="riwayat-icon">🎯</div>
+        <div class="riwayat-info">
+          <div class="name">${item.judul}</div>
+          <div class="meta">${item.mapel||''} • ${item.benar||0}/${item.total||0} benar ${item.tanggal?'• '+item.tanggal:''} • ${status}</div>
+        </div>
+        <div class="riwayat-skor">
+          <div class="skor-num ${cls}">${item.skor}</div>
+          <div class="skor-lbl">Nilai</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  init();
+</script>
+</body>
+</html>

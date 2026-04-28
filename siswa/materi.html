@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Materi Pelajaran — LMS SD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --blue:#3B82F6;--green:#22C55E;--yellow:#F59E0B;--coral:#FF6B6B;
+      --purple:#A855F7;--bg:#EEF6FF;--white:#fff;--text:#1E293B;--muted:#64748B;--border:#E2E8F0;
+    }
+    body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;}
+
+    /* NAV */
+    .topbar{background:linear-gradient(135deg,#22C55E,#16A34A);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(34,197,94,.3);}
+    .topbar-left{display:flex;align-items:center;gap:14px;}
+    .topbar a{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;font-weight:700;}
+    .topbar a:hover{color:#fff;}
+    .topbar h1{font-family:'Fredoka One',cursive;color:#fff;font-size:20px;}
+    .btn-logout{background:rgba(255,255,255,.2);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+
+    /* HEADER BANNER */
+    .banner{background:linear-gradient(135deg,#22C55E,#16A34A);padding:24px 28px 48px;text-align:center;position:relative;overflow:hidden;}
+    .banner::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:30px;background:var(--bg);border-radius:30px 30px 0 0;}
+    .banner h2{font-family:'Fredoka One',cursive;color:#fff;font-size:28px;margin-bottom:4px;}
+    .banner p{color:rgba(255,255,255,.85);font-size:14px;font-weight:600;}
+    .banner .kelas-tag{display:inline-block;background:rgba(255,255,255,.25);color:#fff;padding:4px 16px;border-radius:20px;font-size:13px;font-weight:800;margin-top:8px;}
+
+    /* CONTAINER */
+    .container{max-width:900px;margin:0 auto;padding:24px 20px 40px;}
+
+    /* FILTER MAPEL */
+    .mapel-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+    .mapel-btn{padding:8px 16px;border:2.5px solid var(--border);border-radius:20px;background:#F8FAFC;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;}
+    .mapel-btn:hover,.mapel-btn.active{border-color:var(--green);background:var(--green);color:#fff;}
+
+    /* MATERI CARDS */
+    .materi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+    .materi-card{background:var(--white);border-radius:20px;box-shadow:0 3px 14px rgba(0,0,0,.07);overflow:hidden;cursor:pointer;transition:.25s;border:2.5px solid transparent;}
+    .materi-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.12);border-color:#BBF7D0;}
+    .materi-card.selesai{border-color:#86EFAC;}
+    .card-top{padding:20px;background:linear-gradient(135deg,#F0FDF4,#DCFCE7);}
+    .card-top.mat{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);}
+    .card-top.ipa{background:linear-gradient(135deg,#F0FDF4,#D1FAE5);}
+    .card-top.ips{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);}
+    .card-top.bindo{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);}
+    .card-top.bind{background:linear-gradient(135deg,#FFF1F2,#FFE4E6);}
+    .mapel-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+    .badge-mat{background:#DBEAFE;color:#1E40AF;} .badge-ipa{background:#D1FAE5;color:#065F46;}
+    .badge-ips{background:#FEF3C7;color:#92400E;} .badge-bindo{background:#EDE9FE;color:#5B21B6;}
+    .badge-bind{background:#FFE4E6;color:#9F1239;} .badge-lain{background:#F1F5F9;color:#475569;}
+    .card-icon{font-size:36px;margin-bottom:8px;}
+    .card-title{font-family:'Fredoka One',cursive;font-size:16px;color:var(--text);line-height:1.3;}
+    .card-bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .card-status{font-size:12px;font-weight:700;}
+    .status-selesai{color:var(--green);}
+    .status-belum{color:var(--muted);}
+    .read-btn{background:var(--green);color:#fff;border:none;padding:7px 16px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+    .read-btn:hover{background:#16A34A;}
+
+    /* EMPTY */
+    .empty{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty div{font-size:52px;margin-bottom:12px;}
+    .empty p{font-size:15px;font-weight:600;}
+    .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:15px;font-weight:600;}
+
+    /* READER MODAL */
+    .reader-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+    .reader-overlay.open{display:flex;}
+    .reader{background:var(--white);border-radius:20px;width:100%;max-width:680px;margin:16px;max-height:90vh;display:flex;flex-direction:column;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);}
+    @keyframes modalIn{from{opacity:0;transform:scale(.93) translateY(24px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .reader-header{padding:20px 24px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+    .reader-header-info{flex:1;}
+    .reader-header-info h3{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);margin-bottom:4px;}
+    .reader-header-info .meta{font-size:12px;color:var(--muted);font-weight:600;}
+    .reader-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);flex-shrink:0;line-height:1;margin-top:-2px;}
+    .reader-body{padding:24px;overflow-y:auto;flex:1;line-height:1.8;font-size:15px;color:var(--text);}
+    .reader-body h3{font-family:'Fredoka One',cursive;font-size:18px;margin:16px 0 8px;color:var(--text);}
+    .reader-body strong{color:var(--text);}
+    .reader-body ul{padding-left:20px;margin:8px 0;}
+    .reader-body li{margin-bottom:4px;}
+    .reader-body img{max-width:100%;border-radius:12px;margin:12px 0;}
+    .reader-footer{padding:16px 24px;border-top:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .poin-notif{background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;color:#15803D;}
+    .btn-selesai{background:linear-gradient(135deg,#22C55E,#16A34A);color:#fff;border:none;padding:11px 24px;border-radius:12px;font-family:'Fredoka One',cursive;font-size:16px;cursor:pointer;transition:.2s;box-shadow:0 3px 10px rgba(34,197,94,.3);}
+    .btn-selesai:hover{transform:translateY(-1px);}
+    .btn-selesai.done{background:#E2E8F0;color:var(--muted);cursor:default;transform:none;box-shadow:none;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:14px;font-weight:700;font-size:14px;color:#fff;z-index:300;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:8px;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.success{background:linear-gradient(135deg,#22C55E,#16A34A);}
+    .toast.info{background:linear-gradient(135deg,#3B82F6,#6366F1);}
+
+    @media(max-width:480px){.container{padding:16px 14px 32px;}.materi-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="dashboard.html">← Beranda</a>
+    <h1>📖 Materi Pelajaran</h1>
+  </div>
+  <button class="btn-logout" onclick="doLogout()">Keluar</button>
+</div>
+
+<div class="banner">
+  <h2>📚 Yuk Belajar!</h2>
+  <p>Pilih materi yang ingin kamu pelajari hari ini</p>
+  <div class="kelas-tag" id="kelas-tag">Kelas ...</div>
+</div>
+
+<div class="container">
+  <div class="mapel-filter" id="mapel-filter">
+    <button class="mapel-btn active" onclick="setMapel(this,'')">📚 Semua</button>
+    <button class="mapel-btn" onclick="setMapel(this,'matematika')">🔢 Matematika</button>
+    <button class="mapel-btn" onclick="setMapel(this,'ipa')">🔬 IPA</button>
+    <button class="mapel-btn" onclick="setMapel(this,'ips')">🌍 IPS</button>
+    <button class="mapel-btn" onclick="setMapel(this,'b.indonesia')">📝 B. Indonesia</button>
+    <button class="mapel-btn" onclick="setMapel(this,'b.inggris')">🗣️ B. Inggris</button>
+  </div>
+
+  <div id="materi-container">
+    <div class="loading">⏳ Memuat materi untukmu...</div>
+  </div>
+</div>
+
+<!-- READER -->
+<div class="reader-overlay" id="reader-overlay">
+  <div class="reader">
+    <div class="reader-header">
+      <div class="reader-header-info">
+        <h3 id="reader-judul">Judul Materi</h3>
+        <div class="meta" id="reader-meta">Kelas • Mata Pelajaran</div>
+      </div>
+      <button class="reader-close" onclick="tutupReader()">✕</button>
+    </div>
+    <div class="reader-body" id="reader-body"></div>
+    <div class="reader-footer">
+      <div class="poin-notif" id="poin-notif">⭐ +10 poin setelah selesai membaca!</div>
+      <button class="btn-selesai" id="btn-selesai" onclick="tandaiSelesai()">✅ Tandai Selesai</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { db }                        from "../assets/js/firebase-config.js";
+  import { guardSiswa, getCurrentUserData, logout } from "../assets/js/auth.js";
+  import {
+    collection, getDocs, doc, getDoc, updateDoc, arrayUnion, increment, query, where, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  guardSiswa();
+  window.doLogout = logout;
+
+  let userData     = null;
+  let semuaMateri  = [];
+  let mapelFilter  = '';
+  let materiAktif  = null;
+  const POIN_MATERI = 10;
+
+  const MAPEL_ICON  = {matematika:'🔢',ipa:'🔬',ips:'🌍','b.indonesia':'📝','b.inggris':'🗣️',pkn:'🏛️',seni:'🎨',pjok:'⚽'};
+  const MAPEL_LABEL = {matematika:'Matematika',ipa:'IPA',ips:'IPS','b.indonesia':'B. Indonesia','b.inggris':'B. Inggris',pkn:'PKN',seni:'Seni',pjok:'PJOK'};
+  const CARD_CLASS  = {matematika:'mat',ipa:'ipa',ips:'ips','b.indonesia':'bindo','b.inggris':'bind'};
+  const BADGE_CLASS = {matematika:'badge-mat',ipa:'badge-ipa',ips:'badge-ips','b.indonesia':'badge-bindo','b.inggris':'badge-bind'};
+
+  function toast(msg, type="success") {
+    const el = document.getElementById('toast');
+    el.innerHTML = msg; el.className = `toast ${type} show`;
+    setTimeout(()=>el.classList.remove('show'), 3000);
+  }
+
+  /* ── Init ── */
+  async function init() {
+    userData = await getCurrentUserData();
+    if (!userData) return;
+
+    document.getElementById('kelas-tag').textContent = `Kelas ${userData.kelas}`;
+
+    // Ambil materi sesuai kelas siswa
+    const q    = query(collection(db,"materi"), where("kelas","==",userData.kelas), orderBy("mapel"), orderBy("judul"));
+    const snap = await getDocs(q);
+    semuaMateri = snap.docs.map(d=>({id:d.id,...d.data()}));
+
+    // Ambil progres
+    const progSnap = await getDoc(doc(db,"progres",userData.uid));
+    const selesaiList = progSnap.exists() ? (progSnap.data().materi_selesai||[]) : [];
+
+    semuaMateri.forEach(m => m._selesai = selesaiList.includes(m.id));
+    render();
+  }
+
+  function render() {
+    let data = semuaMateri;
+    if (mapelFilter) data = data.filter(m=>m.mapel===mapelFilter);
+
+    const container = document.getElementById('materi-container');
+    if (!data.length) {
+      container.innerHTML = `<div class="empty"><div>📭</div><p>Belum ada materi untuk kelas ini.<br>Tanyakan gurumu ya!</p></div>`;
+      return;
+    }
+
+    container.innerHTML = `<div class="materi-grid">${data.map(m=>{
+      const cc = CARD_CLASS[m.mapel]||'';
+      const bc = BADGE_CLASS[m.mapel]||'badge-lain';
+      const ic = MAPEL_ICON[m.mapel]||'📄';
+      const lb = MAPEL_LABEL[m.mapel]||m.mapel;
+      return `
+      <div class="materi-card${m._selesai?' selesai':''}" onclick="bukaReader('${m.id}')">
+        <div class="card-top ${cc}">
+          <span class="mapel-badge ${bc}">${lb}</span>
+          <div class="card-icon">${ic}</div>
+          <div class="card-title">${m.judul}</div>
+        </div>
+        <div class="card-bottom">
+          <span class="card-status ${m._selesai?'status-selesai':'status-belum'}">
+            ${m._selesai ? '✅ Sudah dibaca' : '📖 Belum dibaca'}
+          </span>
+          <button class="read-btn" onclick="event.stopPropagation();bukaReader('${m.id}')">
+            ${m._selesai ? 'Baca Lagi' : 'Baca'}
+          </button>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  window.setMapel = (btn, val) => {
+    document.querySelectorAll('.mapel-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); mapelFilter=val; render();
+  };
+
+  /* ── Reader ── */
+  window.bukaReader = (id) => {
+    materiAktif = semuaMateri.find(m=>m.id===id);
+    if (!materiAktif) return;
+
+    const lb = MAPEL_LABEL[materiAktif.mapel]||materiAktif.mapel;
+    document.getElementById('reader-judul').textContent = materiAktif.judul;
+    document.getElementById('reader-meta').textContent  = `Kelas ${materiAktif.kelas} • ${lb}`;
+
+    let body = materiAktif.konten||'<p>Isi materi belum tersedia.</p>';
+    if (materiAktif.gambar_url)
+      body = `<img src="${materiAktif.gambar_url}" alt="${materiAktif.judul}">` + body;
+    document.getElementById('reader-body').innerHTML = body;
+
+    const sudahSelesai = materiAktif._selesai;
+    const btnSelesai   = document.getElementById('btn-selesai');
+    const poinNotif    = document.getElementById('poin-notif');
+    if (sudahSelesai) {
+      btnSelesai.textContent = '✅ Sudah Selesai Dibaca';
+      btnSelesai.classList.add('done');
+      poinNotif.textContent  = '🎉 Kamu sudah membaca materi ini!';
+    } else {
+      btnSelesai.textContent = '✅ Tandai Selesai (+10 poin)';
+      btnSelesai.classList.remove('done');
+      poinNotif.textContent  = `⭐ Kamu dapat +${POIN_MATERI} poin setelah selesai membaca!`;
+    }
+    document.getElementById('reader-overlay').classList.add('open');
+  };
+
+  window.tutupReader = () => {
+    document.getElementById('reader-overlay').classList.remove('open');
+    materiAktif = null;
+  };
+
+  /* ── Tandai Selesai ── */
+  window.tandaiSelesai = async () => {
+    if (!materiAktif || materiAktif._selesai) return;
+    const btn = document.getElementById('btn-selesai');
+    btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
+    try {
+      const progRef = doc(db,"progres",userData.uid);
+      await updateDoc(progRef, {
+        materi_selesai: arrayUnion(materiAktif.id),
+        poin_total: increment(POIN_MATERI)
+      }).catch(async()=>{
+        // Jika dokumen belum ada, buat baru
+        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        await setDoc(progRef, { materi_selesai:[materiAktif.id], poin_total:POIN_MATERI, kuis_hasil:{}, badge:[] });
+      });
+      materiAktif._selesai = true;
+      btn.textContent = '✅ Sudah Selesai Dibaca';
+      btn.classList.add('done');
+      document.getElementById('poin-notif').textContent = '🎉 Kamu sudah membaca materi ini!';
+      toast(`🌟 Hebat! Kamu dapat +${POIN_MATERI} poin!`,'success');
+      render();
+    } catch(e) {
+      btn.disabled=false; btn.textContent='✅ Tandai Selesai (+10 poin)';
+      toast('❌ Gagal menyimpan: '+e.message,'info');
+    }
+  };
+
+  document.getElementById('reader-overlay').addEventListener('click',e=>{
+    if(e.target.id==='reader-overlay') tutupReader();
+  });
+
+  init();
+</script>
+</body>
+</html>

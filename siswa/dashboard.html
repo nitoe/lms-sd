@@ -3,27 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Belajar Yuk! — LMS SD</title>
+  <title>Beranda — LMS SD</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Nunito',sans-serif;background:#EEF6FF;min-height:100vh;}
-    .topbar{background:linear-gradient(135deg,#22C55E,#16A34A);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
-    .topbar h1{font-family:'Fredoka One',cursive;color:white;font-size:20px;}
-    .btn-logout{background:rgba(255,255,255,.2);color:white;border:none;padding:8px 16px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;}
-    .container{max-width:700px;margin:32px auto;padding:0 20px;}
-    .hero{background:white;border-radius:20px;padding:28px;margin-bottom:24px;box-shadow:0 4px 16px rgba(0,0,0,.07);text-align:center;}
-    .hero-avatar{font-size:64px;margin-bottom:12px;}
-    .hero h2{font-family:'Fredoka One',cursive;font-size:24px;color:#1E293B;margin-bottom:6px;}
-    .hero p{color:#64748B;font-size:14px;}
-    .poin-badge{display:inline-flex;align-items:center;gap:6px;background:#FFF9C4;color:#A16207;padding:6px 16px;border-radius:20px;font-weight:800;font-size:15px;margin-top:12px;}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-    .card{background:white;border-radius:20px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,.07);text-decoration:none;display:block;transition:.2s;text-align:center;}
-    .card:hover{transform:translateY(-4px);}
-    .card-icon{font-size:48px;margin-bottom:10px;}
-    .card h3{font-family:'Fredoka One',cursive;font-size:18px;color:#1E293B;margin-bottom:4px;}
-    .card p{font-size:13px;color:#64748B;}
-    @media(max-width:480px){.grid{grid-template-columns:1fr;}.container{padding:0 16px;}}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:#22C55E; --blue:#3B82F6; --yellow:#F59E0B; --coral:#FF6B6B;
+      --purple:#A855F7; --bg:#EEF6FF; --white:#fff; --text:#1E293B;
+      --muted:#64748B; --border:#E2E8F0;
+    }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; }
+
+    /* TOPBAR */
+    .topbar { background:linear-gradient(135deg,#22C55E,#16A34A); padding:0 24px; height:58px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(34,197,94,.3); }
+    .topbar h1 { font-family:'Fredoka One',cursive; color:#fff; font-size:20px; }
+    .btn-logout { background:rgba(255,255,255,.2); color:#fff; border:none; padding:7px 16px; border-radius:8px; font-family:'Nunito',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
+    .btn-logout:hover { background:rgba(255,255,255,.3); }
+
+    /* HERO */
+    .hero { background:linear-gradient(135deg,#22C55E,#16A34A); padding:28px 24px 64px; position:relative; overflow:hidden; }
+    .hero::before { content:'🌟'; position:absolute; font-size:120px; right:-20px; top:-20px; opacity:.15; }
+    .hero::after  { content:''; position:absolute; bottom:-2px; left:0; right:0; height:36px; background:var(--bg); border-radius:36px 36px 0 0; }
+    .hero-content { max-width:860px; margin:0 auto; }
+    .hero-row { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .hero-greet { color:#fff; }
+    .hero-greet .sapaan { font-family:'Fredoka One',cursive; font-size:26px; margin-bottom:4px; }
+    .hero-greet .sub { font-size:14px; opacity:.85; font-weight:600; }
+    .hero-avatar { font-size:64px; filter:drop-shadow(0 4px 12px rgba(0,0,0,.15)); }
+    .hero-stats { display:flex; gap:12px; margin-top:12px; flex-wrap:wrap; }
+    .stat-pill { background:rgba(255,255,255,.25); color:#fff; padding:8px 16px; border-radius:20px; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px; backdrop-filter:blur(4px); }
+
+    /* MAIN */
+    .container { max-width:860px; margin:0 auto; padding:24px 20px 48px; }
+
+    /* MENU CARDS */
+    .menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; margin-bottom:28px; }
+    .menu-card { background:var(--white); border-radius:20px; padding:24px 18px; text-align:center; text-decoration:none; display:block; box-shadow:0 3px 14px rgba(0,0,0,.07); transition:.25s; border:2.5px solid transparent; }
+    .menu-card:hover { transform:translateY(-5px); box-shadow:0 8px 24px rgba(0,0,0,.12); }
+    .menu-card.materi:hover  { border-color:#86EFAC; }
+    .menu-card.kuis:hover    { border-color:#FED7AA; }
+    .menu-card.profil:hover  { border-color:#C4B5FD; }
+    .menu-icon { font-size:48px; margin-bottom:10px; display:block; }
+    .menu-card h3 { font-family:'Fredoka One',cursive; font-size:17px; color:var(--text); margin-bottom:4px; }
+    .menu-card p  { font-size:12px; color:var(--muted); line-height:1.4; }
+    .menu-badge { display:inline-block; margin-top:8px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:800; }
+    .badge-green  { background:#D1FAE5; color:#065F46; }
+    .badge-orange { background:#FFEDD5; color:#9A3412; }
+    .badge-purple { background:#EDE9FE; color:#5B21B6; }
+
+    /* SECTION TITLE */
+    .section-title { font-family:'Fredoka One',cursive; font-size:20px; color:var(--text); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+
+    /* AKTIVITAS TERAKHIR */
+    .aktivitas-list { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+    .akt-item { background:var(--white); border-radius:14px; padding:14px 18px; display:flex; align-items:center; gap:14px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+    .akt-icon { font-size:28px; flex-shrink:0; }
+    .akt-info { flex:1; }
+    .akt-info .name { font-size:14px; font-weight:700; color:var(--text); margin-bottom:2px; }
+    .akt-info .meta { font-size:12px; color:var(--muted); }
+    .akt-nilai { font-family:'Fredoka One',cursive; font-size:20px; }
+    .nilai-good { color:var(--green); }
+    .nilai-mid  { color:var(--yellow); }
+    .nilai-low  { color:var(--coral); }
+    .empty-akt  { text-align:center; padding:32px; color:var(--muted); font-size:14px; font-weight:600; background:var(--white); border-radius:14px; }
+
+    /* POIN PROGRESS */
+    .poin-card { background:linear-gradient(135deg,#FEF9C3,#FEF3C7); border-radius:20px; padding:22px 24px; box-shadow:0 3px 14px rgba(0,0,0,.07); margin-bottom:28px; }
+    .poin-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .poin-top h3 { font-family:'Fredoka One',cursive; font-size:18px; color:#92400E; }
+    .poin-top .angka { font-family:'Fredoka One',cursive; font-size:28px; color:#92400E; }
+    .poin-bar-bg { background:rgba(0,0,0,.1); border-radius:20px; height:12px; overflow:hidden; }
+    .poin-bar-fill { background:linear-gradient(90deg,#F59E0B,#F97316); height:100%; border-radius:20px; transition:width .8s cubic-bezier(.34,1.56,.64,1); }
+    .poin-label { display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#92400E; margin-top:6px; }
+
+    /* LOADING SKELETON */
+    .skeleton { background:linear-gradient(90deg,#E2E8F0 25%,#F1F5F9 50%,#E2E8F0 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; }
+    @keyframes shimmer { to { background-position:-200% 0; } }
+
+    @media(max-width:480px) {
+      .container { padding:16px 14px 40px; }
+      .menu-grid { grid-template-columns:1fr 1fr; }
+      .hero { padding:22px 18px 56px; }
+      .hero-avatar { font-size:48px; }
+    }
   </style>
 </head>
 <body>
@@ -33,55 +95,188 @@
   <button class="btn-logout" onclick="doLogout()">Keluar</button>
 </div>
 
-<div class="container">
-  <div class="hero">
-    <div class="hero-avatar">🧒</div>
-    <h2>Halo, <span id="nama-siswa">Teman</span>!</h2>
-    <p>Kelas <span id="kelas-siswa">?</span> &nbsp;•&nbsp; Ayo semangat belajar hari ini! 🌟</p>
-    <div class="poin-badge">⭐ <span id="poin-siswa">0</span> Poin</div>
-  </div>
-
-  <div class="grid">
-    <a class="card" href="materi.html">
-      <div class="card-icon">📖</div>
-      <h3>Baca Materi</h3>
-      <p>Pelajari materi seru sesuai kelasmu</p>
-    </a>
-    <a class="card" href="kuis.html">
-      <div class="card-icon">🎯</div>
-      <h3>Kerjakan Kuis</h3>
-      <p>Uji kemampuanmu dan kumpulkan poin!</p>
-    </a>
-    <a class="card" href="profil.html">
-      <div class="card-icon">🏆</div>
-      <h3>Badge Saya</h3>
-      <p>Lihat semua pencapaianmu</p>
-    </a>
-    <a class="card" href="profil.html">
-      <div class="card-icon">📈</div>
-      <h3>Nilai Saya</h3>
-      <p>Pantau hasil belajarmu</p>
-    </a>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-row">
+      <div class="hero-greet">
+        <div class="sapaan">Halo, <span id="nama-siswa">...</span>! 👋</div>
+        <div class="sub">Kelas <span id="kelas-siswa">?</span> &nbsp;•&nbsp; Semangat belajar hari ini! 🌟</div>
+        <div class="hero-stats">
+          <div class="stat-pill">⭐ <span id="poin-hero">0</span> Poin</div>
+          <div class="stat-pill">📖 <span id="materi-selesai-count">0</span> Materi Selesai</div>
+          <div class="stat-pill">🏆 <span id="badge-count">0</span> Badge</div>
+        </div>
+      </div>
+      <div class="hero-avatar" id="hero-avatar">🧒</div>
+    </div>
   </div>
 </div>
 
+<div class="container">
+
+  <!-- MENU UTAMA -->
+  <div class="menu-grid">
+    <a class="menu-card materi" href="materi.html">
+      <span class="menu-icon">📖</span>
+      <h3>Baca Materi</h3>
+      <p>Pelajari materi sesuai kelasmu</p>
+      <span class="menu-badge badge-green" id="badge-materi">0 materi</span>
+    </a>
+    <a class="menu-card kuis" href="kuis.html">
+      <span class="menu-icon">🎯</span>
+      <h3>Kerjakan Kuis</h3>
+      <p>Uji kemampuan &amp; kumpulkan poin!</p>
+      <span class="menu-badge badge-orange" id="badge-kuis">0 kuis</span>
+    </a>
+    <a class="menu-card profil" href="profil.html">
+      <span class="menu-icon">🏆</span>
+      <h3>Profil &amp; Badge</h3>
+      <p>Lihat pencapaian dan nilaimu</p>
+      <span class="menu-badge badge-purple" id="badge-profil">Lihat →</span>
+    </a>
+  </div>
+
+  <!-- POIN PROGRESS -->
+  <div class="poin-card">
+    <div class="poin-top">
+      <h3>⭐ Total Poin Kamu</h3>
+      <span class="angka" id="poin-angka">0</span>
+    </div>
+    <div class="poin-bar-bg">
+      <div class="poin-bar-fill" id="poin-bar" style="width:0%"></div>
+    </div>
+    <div class="poin-label">
+      <span>0</span>
+      <span id="poin-next-label">Target: 100 poin → Level 2</span>
+      <span id="poin-target">100</span>
+    </div>
+  </div>
+
+  <!-- AKTIVITAS TERAKHIR -->
+  <div class="section-title">🕐 Aktivitas Terakhir</div>
+  <div class="aktivitas-list" id="aktivitas-list">
+    <div class="empty-akt">⏳ Memuat aktivitas...</div>
+  </div>
+
+</div>
+
 <script type="module">
-  import { guardSiswa, getCurrentUserData } from "../assets/js/auth.js";
-  import { logout } from "../assets/js/auth.js";
+  import { db }                              from "../assets/js/firebase-config.js";
+  import { guardSiswa, getCurrentUserData, logout } from "../assets/js/auth.js";
+  import {
+    doc, getDoc, collection, query, where, getDocs, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // Proteksi halaman — hanya siswa yang boleh masuk
   guardSiswa();
-
-  // Tampilkan data siswa
-  getCurrentUserData().then(user => {
-    if (user) {
-      document.getElementById('nama-siswa').textContent = user.nama || 'Teman';
-      document.getElementById('kelas-siswa').textContent = user.kelas || '?';
-      document.getElementById('poin-siswa').textContent = user.poin_total || 0;
-    }
-  });
-
   window.doLogout = logout;
+
+  /* ── Level system ── */
+  const LEVELS = [
+    {min:0,   max:100,  label:'Level 1 – Pemula Belajar',    next:100},
+    {min:100, max:300,  label:'Level 2 – Siswa Rajin',       next:300},
+    {min:300, max:600,  label:'Level 3 – Bintang Kelas',     next:600},
+    {min:600, max:1000, label:'Level 4 – Juara Pelajaran',   next:1000},
+    {min:1000,max:99999,label:'Level 5 – Master Pengetahuan',next:99999},
+  ];
+  function getLevel(poin) {
+    return LEVELS.find(l=>poin>=l.min&&poin<l.max) || LEVELS[LEVELS.length-1];
+  }
+
+  async function init() {
+    const userData = await getCurrentUserData();
+    if (!userData) return;
+
+    // Tampilkan info dasar
+    document.getElementById('nama-siswa').textContent  = userData.nama || 'Teman';
+    document.getElementById('kelas-siswa').textContent = userData.kelas || '?';
+
+    // Avatar berdasarkan jenis kelamin (sederhana berdasarkan nama, default 🧒)
+    document.getElementById('hero-avatar').textContent = '🧒';
+
+    // Ambil progres dari Firestore
+    const progSnap = await getDoc(doc(db,'progres',userData.uid));
+    const progres  = progSnap.exists() ? progSnap.data() : { poin_total:0, materi_selesai:[], kuis_hasil:{}, badge:[] };
+
+    const poin         = progres.poin_total     || 0;
+    const materiSelesai= progres.materi_selesai || [];
+    const kuisHasil    = progres.kuis_hasil     || {};
+    const badge        = progres.badge          || [];
+
+    // Update hero stats
+    document.getElementById('poin-hero').textContent            = poin;
+    document.getElementById('materi-selesai-count').textContent = materiSelesai.length;
+    document.getElementById('badge-count').textContent          = badge.length;
+    document.getElementById('poin-angka').textContent           = poin;
+
+    // Poin bar
+    const level = getLevel(poin);
+    const pct   = Math.min(((poin - level.min) / (level.max - level.min)) * 100, 100);
+    document.getElementById('poin-bar').style.width          = pct + '%';
+    document.getElementById('poin-target').textContent       = level.max === 99999 ? '∞' : level.max;
+    document.getElementById('poin-next-label').textContent   = level.label;
+
+    // Ambil jumlah materi & kuis untuk kelas ini
+    try {
+      const mSnap = await getDocs(query(collection(db,'materi'), where('kelas','==',userData.kelas)));
+      const kSnap = await getDocs(query(collection(db,'kuis'),   where('kelas','==',userData.kelas)));
+      document.getElementById('badge-materi').textContent = `${materiSelesai.length}/${mSnap.size} selesai`;
+      document.getElementById('badge-kuis').textContent   = `${Object.keys(kuisHasil).length}/${kSnap.size} dikerjakan`;
+    } catch(e) {}
+
+    // Aktivitas terakhir (gabungan materi + kuis, max 5)
+    const aktivitas = [];
+
+    // Materi selesai — ambil judulnya
+    if (materiSelesai.length) {
+      try {
+        const recentIds = materiSelesai.slice(-3);
+        for (const id of recentIds) {
+          const snap = await getDoc(doc(db,'materi',id));
+          if (snap.exists()) {
+            aktivitas.push({ tipe:'materi', judul:snap.data().judul, icon:'📖', nilai:null });
+          }
+        }
+      } catch(e) {}
+    }
+
+    // Kuis hasil
+    for (const [id, hasil] of Object.entries(kuisHasil)) {
+      try {
+        const snap = await getDoc(doc(db,'kuis',id));
+        if (snap.exists()) {
+          aktivitas.push({ tipe:'kuis', judul:snap.data().judul, icon:'🎯', nilai:hasil.skor, tanggal:hasil.tanggal });
+        }
+      } catch(e) {}
+    }
+
+    // Render aktivitas
+    const listEl = document.getElementById('aktivitas-list');
+    if (!aktivitas.length) {
+      listEl.innerHTML = `<div class="empty-akt">✨ Belum ada aktivitas. Mulai belajar sekarang!</div>`;
+    } else {
+      listEl.innerHTML = aktivitas.slice(-5).reverse().map(a => {
+        let nilaiHtml = '';
+        if (a.tipe === 'kuis') {
+          const cls = a.nilai>=70 ? 'nilai-good' : a.nilai>=50 ? 'nilai-mid' : 'nilai-low';
+          nilaiHtml = `<div class="akt-nilai ${cls}">${a.nilai}</div>`;
+        } else {
+          nilaiHtml = `<div class="akt-nilai nilai-good">✅</div>`;
+        }
+        return `
+        <div class="akt-item">
+          <div class="akt-icon">${a.icon}</div>
+          <div class="akt-info">
+            <div class="name">${a.judul}</div>
+            <div class="meta">${a.tipe==='kuis'?'Kuis':'Materi selesai dibaca'}${a.tanggal?' • '+a.tanggal:''}</div>
+          </div>
+          ${nilaiHtml}
+        </div>`;
+      }).join('');
+    }
+  }
+
+  init();
 </script>
 </body>
 </html>

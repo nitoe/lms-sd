@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis — LMS SD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{--blue:#3B82F6;--green:#22C55E;--yellow:#F59E0B;--coral:#FF6B6B;--purple:#A855F7;--bg:#EEF6FF;--white:#fff;--text:#1E293B;--muted:#64748B;--border:#E2E8F0;}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;}
+    .topbar{background:linear-gradient(135deg,#22C55E,#16A34A);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(34,197,94,.3);}
+    .topbar-left{display:flex;align-items:center;gap:14px;}
+    .topbar a{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;font-weight:700;}
+    .topbar a:hover{color:#fff;}
+    .topbar h1{font-family:'Fredoka One',cursive;color:#fff;font-size:20px;}
+    .btn-logout{background:rgba(255,255,255,.2);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+
+    /* SCREENS */
+    .screen{display:none;} .screen.active{display:block;}
+
+    /* ═══ SCREEN 1: DAFTAR KUIS ═══ */
+    .banner{background:linear-gradient(135deg,#F97316,#EA580C);padding:24px 28px 48px;text-align:center;position:relative;overflow:hidden;}
+    .banner::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:30px;background:var(--bg);border-radius:30px 30px 0 0;}
+    .banner h2{font-family:'Fredoka One',cursive;color:#fff;font-size:28px;margin-bottom:4px;}
+    .banner p{color:rgba(255,255,255,.85);font-size:14px;font-weight:600;}
+    .container{max-width:860px;margin:0 auto;padding:24px 20px 40px;}
+    .kuis-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+    .kuis-card{background:var(--white);border-radius:20px;box-shadow:0 3px 14px rgba(0,0,0,.07);overflow:hidden;transition:.25s;}
+    .kuis-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.12);}
+    .kuis-card-top{background:linear-gradient(135deg,#FFF7ED,#FFEDD5);padding:20px;}
+    .kuis-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;background:#FED7AA;color:#9A3412;text-transform:uppercase;margin-bottom:8px;}
+    .kuis-card-top h3{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);margin-bottom:6px;line-height:1.3;}
+    .kuis-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;}
+    .kuis-card-bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .nilai-tag{font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px;}
+    .nilai-tag.lulus{background:#D1FAE5;color:#065F46;}
+    .nilai-tag.belum{background:#F1F5F9;color:var(--muted);}
+    .btn-mulai{background:linear-gradient(135deg,#F97316,#EA580C);color:#fff;border:none;padding:9px 20px;border-radius:12px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;transition:.2s;box-shadow:0 3px 10px rgba(249,115,22,.3);}
+    .btn-mulai:hover{transform:translateY(-1px);}
+    .btn-ulang{background:#EFF6FF;color:var(--blue);border:1.5px solid #BFDBFE;padding:9px 16px;border-radius:12px;font-family:'Fredoka One',cursive;font-size:14px;cursor:pointer;}
+    .empty{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty div{font-size:52px;margin-bottom:12px;}
+    .empty p{font-size:15px;font-weight:600;}
+
+    /* ═══ SCREEN 2: KERJAKAN KUIS ═══ */
+    #screen-kuis{background:var(--bg);min-height:100vh;}
+    .kuis-wrapper{max-width:640px;margin:0 auto;padding:24px 20px 40px;}
+    .kuis-progress-bar{background:#E2E8F0;border-radius:20px;height:10px;margin-bottom:20px;overflow:hidden;}
+    .kuis-progress-fill{background:linear-gradient(90deg,#F97316,#FBBF24);height:100%;border-radius:20px;transition:width .4s ease;}
+    .kuis-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .kuis-info .judul{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);}
+    .kuis-info .nomor{background:#FFF7ED;color:#9A3412;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:800;}
+    .soal-card{background:var(--white);border-radius:20px;padding:28px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:20px;animation:fadeUp .3s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .soal-pertanyaan{font-size:17px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:20px;}
+    .pilihan-list{display:flex;flex-direction:column;gap:10px;}
+    .pilihan-item{padding:14px 18px;border:2.5px solid var(--border);border-radius:14px;cursor:pointer;font-size:15px;font-weight:600;color:var(--text);transition:.2s;display:flex;align-items:center;gap:12px;user-select:none;}
+    .pilihan-item:hover{border-color:var(--blue);background:#EFF6FF;}
+    .pilihan-item.selected{border-color:#F97316;background:#FFF7ED;color:#9A3412;}
+    .pilihan-item.benar{border-color:var(--green);background:#F0FDF4;color:#15803D;}
+    .pilihan-item.salah{border-color:var(--coral);background:#FFF5F5;color:#DC2626;}
+    .pilihan-huruf{width:30px;height:30px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:14px;flex-shrink:0;transition:.2s;}
+    .pilihan-item.selected .pilihan-huruf{background:#F97316;color:#fff;}
+    .pilihan-item.benar .pilihan-huruf{background:var(--green);color:#fff;}
+    .pilihan-item.salah .pilihan-huruf{background:var(--coral);color:#fff;}
+    .feedback-box{padding:14px 18px;border-radius:14px;font-size:14px;font-weight:700;margin-top:12px;display:none;animation:fadeUp .2s ease;}
+    .feedback-box.benar{background:#F0FDF4;border:2px solid #BBF7D0;color:#15803D;}
+    .feedback-box.salah{background:#FFF5F5;border:2px solid #FECACA;color:#DC2626;}
+    .nav-btns{display:flex;gap:12px;justify-content:flex-end;}
+    .btn-nav{padding:12px 28px;border:none;border-radius:14px;font-family:'Fredoka One',cursive;font-size:17px;cursor:pointer;transition:.2s;}
+    .btn-next{background:linear-gradient(135deg,#F97316,#EA580C);color:#fff;box-shadow:0 3px 10px rgba(249,115,22,.3);}
+    .btn-next:hover{transform:translateY(-1px);}
+    .btn-next:disabled{background:#E2E8F0;color:var(--muted);box-shadow:none;transform:none;cursor:not-allowed;}
+
+    /* ═══ SCREEN 3: HASIL ═══ */
+    #screen-hasil{background:var(--bg);min-height:100vh;}
+    .hasil-wrapper{max-width:540px;margin:0 auto;padding:32px 20px 60px;text-align:center;}
+    .hasil-card{background:var(--white);border-radius:24px;padding:36px 32px;box-shadow:0 6px 24px rgba(0,0,0,.1);animation:modalIn .5s cubic-bezier(.34,1.56,.64,1);}
+    @keyframes modalIn{from{opacity:0;transform:scale(.88);}to{opacity:1;transform:scale(1);}}
+    .hasil-emoji{font-size:72px;margin-bottom:12px;animation:bounce 1s ease infinite;}
+    @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+    .hasil-card h2{font-family:'Fredoka One',cursive;font-size:28px;color:var(--text);margin-bottom:8px;}
+    .hasil-card .sub{font-size:15px;color:var(--muted);margin-bottom:24px;}
+    .skor-besar{font-family:'Fredoka One',cursive;font-size:72px;line-height:1;margin-bottom:4px;}
+    .skor-label{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:20px;}
+    .detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
+    .detail-item{background:#F8FAFC;border-radius:14px;padding:14px 10px;}
+    .detail-item .val{font-family:'Fredoka One',cursive;font-size:22px;color:var(--text);}
+    .detail-item .lbl{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px;}
+    .poin-earned{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-radius:14px;padding:14px 20px;font-size:15px;font-weight:800;color:#92400E;margin-bottom:20px;}
+    .hasil-btns{display:flex;flex-direction:column;gap:10px;}
+    .btn-lanjut{padding:14px;border:none;border-radius:14px;font-family:'Fredoka One',cursive;font-size:17px;cursor:pointer;transition:.2s;}
+    .btn-ke-dashboard{background:linear-gradient(135deg,#22C55E,#16A34A);color:#fff;box-shadow:0 3px 10px rgba(34,197,94,.3);}
+    .btn-ke-dashboard:hover{transform:translateY(-1px);}
+    .btn-ke-daftar{background:#F1F5F9;color:var(--muted);}
+    .btn-ke-daftar:hover{background:#E2E8F0;}
+
+    .toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:14px;font-weight:700;font-size:14px;color:#fff;z-index:300;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.success{background:linear-gradient(135deg,#22C55E,#16A34A);}
+    .toast.error{background:#EF4444;}
+    @media(max-width:480px){.container{padding:16px 14px 32px;}.kuis-grid{grid-template-columns:1fr;}.detail-grid{grid-template-columns:1fr 1fr;}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="dashboard.html" id="back-link">← Beranda</a>
+    <h1>🎯 Kuis</h1>
+  </div>
+  <button class="btn-logout" onclick="doLogout()">Keluar</button>
+</div>
+
+<!-- SCREEN 1: DAFTAR KUIS -->
+<div class="screen active" id="screen-daftar">
+  <div class="banner">
+    <h2>🎯 Ayo Kuis!</h2>
+    <p>Uji kemampuanmu dan kumpulkan poin</p>
+  </div>
+  <div class="container">
+    <div id="kuis-container">
+      <div class="empty"><div>⏳</div><p>Memuat kuis...</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2: KERJAKAN KUIS -->
+<div class="screen" id="screen-kuis">
+  <div class="kuis-wrapper">
+    <div class="kuis-progress-bar"><div class="kuis-progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="kuis-info">
+      <span class="judul" id="kuis-judul-aktif">Kuis</span>
+      <span class="nomor" id="nomor-soal">1 / 10</span>
+    </div>
+    <div class="soal-card" id="soal-card">
+      <div class="soal-pertanyaan" id="pertanyaan-text"></div>
+      <div class="pilihan-list" id="pilihan-list"></div>
+      <div class="feedback-box" id="feedback-box"></div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-nav btn-next" id="btn-next" onclick="soalBerikutnya()" disabled>
+        Selanjutnya →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: HASIL -->
+<div class="screen" id="screen-hasil">
+  <div class="hasil-wrapper">
+    <div class="hasil-card">
+      <div class="hasil-emoji" id="hasil-emoji">🎉</div>
+      <h2 id="hasil-judul">Hebat!</h2>
+      <p class="sub" id="hasil-sub">Kamu sudah menyelesaikan kuis!</p>
+      <div class="skor-besar" id="skor-besar">0</div>
+      <div class="skor-label">Nilai</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="val" id="detail-benar">0</div><div class="lbl">✅ Benar</div></div>
+        <div class="detail-item"><div class="val" id="detail-salah">0</div><div class="lbl">❌ Salah</div></div>
+        <div class="detail-item"><div class="val" id="detail-total">0</div><div class="lbl">📝 Total</div></div>
+      </div>
+      <div class="poin-earned" id="poin-earned">⭐ +0 poin kamu dapatkan!</div>
+      <div class="hasil-btns">
+        <button class="btn-lanjut btn-ke-dashboard" onclick="keDashboard()">🏠 Kembali ke Beranda</button>
+        <button class="btn-lanjut btn-ke-daftar" onclick="keDaftarKuis()">📋 Kuis Lainnya</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { db }                        from "../assets/js/firebase-config.js";
+  import { guardSiswa, getCurrentUserData, logout } from "../assets/js/auth.js";
+  import {
+    collection, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  guardSiswa();
+  window.doLogout = logout;
+
+  let userData     = null;
+  let semuaKuis    = [];
+  let progresData  = {};
+  let kuisAktif    = null;
+  let soalIndex    = 0;
+  let jawaban      = [];   // index jawaban user per soal
+  let dijawab      = false;
+
+  function toast(msg, type="success") {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.className=`toast ${type} show`;
+    setTimeout(()=>el.classList.remove('show'),3000);
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    // back link
+    const bl = document.getElementById('back-link');
+    if(id==='screen-kuis') { bl.textContent='✕ Keluar Kuis'; bl.onclick=()=>{if(confirm('Keluar dari kuis? Progres tidak tersimpan.')) keDaftarKuis(); return false;}; }
+    else { bl.textContent='← Beranda'; bl.onclick=null; bl.href='dashboard.html'; }
+  }
+
+  async function init() {
+    userData = await getCurrentUserData();
+    if (!userData) return;
+
+    const q    = query(collection(db,"kuis"), where("kelas","==",userData.kelas), orderBy("mapel"), orderBy("judul"));
+    const snap = await getDocs(q);
+    semuaKuis  = snap.docs.map(d=>({id:d.id,...d.data()}));
+
+    const pSnap = await getDoc(doc(db,"progres",userData.uid));
+    progresData = pSnap.exists() ? (pSnap.data().kuis_hasil||{}) : {};
+    renderDaftar();
+  }
+
+  function renderDaftar() {
+    const cont = document.getElementById('kuis-container');
+    if (!semuaKuis.length) {
+      cont.innerHTML=`<div class="empty"><div>🎯</div><p>Belum ada kuis untuk kelasmu.<br>Tanya gurumu ya!</p></div>`;
+      return;
+    }
+    cont.innerHTML=`<div class="kuis-grid">${semuaKuis.map(k=>{
+      const hasil  = progresData[k.id];
+      const sudah  = !!hasil;
+      const nilai  = sudah ? hasil.skor : null;
+      const lulus  = nilai >= 70;
+      return `
+      <div class="kuis-card">
+        <div class="kuis-card-top">
+          <span class="kuis-badge">Kelas ${k.kelas} — ${k.mapel||''}</span>
+          <h3>${k.judul}</h3>
+          <div class="kuis-meta">
+            <span>📝 ${(k.soal||[]).length} soal</span>
+            ${sudah?`<span>🕐 Terakhir: ${hasil.tanggal||''}</span>`:''}
+          </div>
+        </div>
+        <div class="kuis-card-bottom">
+          ${sudah
+            ? `<span class="nilai-tag ${lulus?'lulus':''}">${lulus?'✅':'📖'} Nilai: ${nilai}</span>`
+            : `<span class="nilai-tag belum">Belum dikerjakan</span>`
+          }
+          <div style="display:flex;gap:8px;">
+            ${sudah?`<button class="btn-ulang" onclick="mulaiKuis('${k.id}')">Ulangi</button>`:''}
+            <button class="btn-mulai" onclick="mulaiKuis('${k.id}')">${sudah?'Kerjakan Lagi':'Mulai Kuis'}</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  /* ── Mulai Kuis ── */
+  window.mulaiKuis = (id) => {
+    kuisAktif = semuaKuis.find(k=>k.id===id);
+    if (!kuisAktif || !kuisAktif.soal?.length) return toast('❌ Kuis ini belum punya soal!','error');
+    soalIndex = 0;
+    jawaban   = new Array(kuisAktif.soal.length).fill(null);
+    dijawab   = false;
+    document.getElementById('kuis-judul-aktif').textContent = kuisAktif.judul;
+    showScreen('screen-kuis');
+    renderSoal();
+  };
+
+  function renderSoal() {
+    const soal  = kuisAktif.soal[soalIndex];
+    const total = kuisAktif.soal.length;
+    dijawab     = false;
+
+    document.getElementById('nomor-soal').textContent    = `${soalIndex+1} / ${total}`;
+    document.getElementById('progress-fill').style.width = `${((soalIndex)/total)*100}%`;
+    document.getElementById('pertanyaan-text').textContent = soal.pertanyaan;
+    document.getElementById('feedback-box').style.display  = 'none';
+    document.getElementById('btn-next').disabled = true;
+
+    const HURUF = ['A','B','C','D'];
+    document.getElementById('pilihan-list').innerHTML = soal.pilihan.map((p,i)=>`
+      <div class="pilihan-item" id="pilihan-${i}" onclick="pilihJawaban(${i})">
+        <span class="pilihan-huruf">${HURUF[i]}</span>
+        <span>${p}</span>
+      </div>
+    `).join('');
+  }
+
+  window.pilihJawaban = (idx) => {
+    if (dijawab) return;
+    dijawab = true;
+    jawaban[soalIndex] = idx;
+
+    const soal    = kuisAktif.soal[soalIndex];
+    const benar   = soal.jawaban;
+    const feedback = document.getElementById('feedback-box');
+
+    document.querySelectorAll('.pilihan-item').forEach((el,i)=>{
+      el.onclick = null;
+      if (i===benar)  el.classList.add('benar');
+      if (i===idx && idx!==benar) el.classList.add('salah');
+    });
+
+    if (idx===benar) {
+      feedback.textContent = '🎉 Benar! Bagus sekali!';
+      feedback.className   = 'feedback-box benar';
+    } else {
+      feedback.textContent = `❌ Belum tepat. Jawaban yang benar adalah ${['A','B','C','D'][benar]}.`;
+      feedback.className   = 'feedback-box salah';
+    }
+    feedback.style.display = 'block';
+
+    const isLast = soalIndex === kuisAktif.soal.length-1;
+    const btn    = document.getElementById('btn-next');
+    btn.disabled = false;
+    btn.textContent = isLast ? '🏁 Lihat Hasil' : 'Selanjutnya →';
+  };
+
+  window.soalBerikutnya = () => {
+    if (!dijawab) return;
+    if (soalIndex < kuisAktif.soal.length-1) {
+      soalIndex++;
+      renderSoal();
+    } else {
+      selesaiKuis();
+    }
+  };
+
+  /* ── Selesai & Hitung Skor ── */
+  async function selesaiKuis() {
+    const soalList = kuisAktif.soal;
+    let benarCount = 0;
+    jawaban.forEach((j,i) => { if(j===soalList[i].jawaban) benarCount++; });
+
+    const total = soalList.length;
+    const nilai = Math.round((benarCount/total)*100);
+    const poin  = benarCount * 5;   // 5 poin per soal benar
+
+    // Emoji & pesan berdasarkan skor
+    let emoji, judul, sub;
+    if (nilai>=90)     { emoji='🏆'; judul='Luar Biasa!';      sub='Nilai kamu sempurna! Kamu juaranya!'; }
+    else if (nilai>=70){ emoji='🌟'; judul='Hebat Sekali!';    sub='Kamu sudah lulus kuis ini! Terus semangat!'; }
+    else if (nilai>=50){ emoji='👍'; judul='Lumayan Bagus!';   sub='Terus berlatih, kamu pasti bisa lebih baik!'; }
+    else               { emoji='💪'; judul='Ayo Terus Coba!';  sub='Jangan menyerah, baca lagi materinya ya!'; }
+
+    document.getElementById('hasil-emoji').textContent = emoji;
+    document.getElementById('hasil-judul').textContent = judul;
+    document.getElementById('hasil-sub').textContent   = sub;
+    document.getElementById('skor-besar').textContent  = nilai;
+    document.getElementById('skor-besar').style.color  = nilai>=70 ? '#22C55E' : nilai>=50 ? '#F59E0B' : '#EF4444';
+    document.getElementById('detail-benar').textContent = benarCount;
+    document.getElementById('detail-salah').textContent = total-benarCount;
+    document.getElementById('detail-total').textContent = total;
+    document.getElementById('poin-earned').textContent  = `⭐ Kamu mendapat +${poin} poin!`;
+    document.getElementById('progress-fill').style.width = '100%';
+
+    showScreen('screen-hasil');
+
+    // Simpan ke Firestore
+    try {
+      const tanggal  = new Date().toLocaleDateString('id-ID');
+      const progRef  = doc(db,"progres",userData.uid);
+      const pSnap    = await getDoc(progRef);
+      const poinLama = pSnap.exists() ? (pSnap.data().poin_total||0) : 0;
+      const dataUpdate = {
+        [`kuis_hasil.${kuisAktif.id}`]: { skor:nilai, benar:benarCount, total, tanggal },
+        poin_total: poinLama + poin
+      };
+      if (pSnap.exists()) {
+        await updateDoc(progRef, dataUpdate);
+      } else {
+        await setDoc(progRef, { kuis_hasil:{ [kuisAktif.id]:{skor:nilai,benar:benarCount,total,tanggal} }, poin_total:poin, materi_selesai:[], badge:[] });
+      }
+      // Update cache lokal
+      progresData[kuisAktif.id] = { skor:nilai, benar:benarCount, total, tanggal };
+    } catch(e) { toast('❌ Gagal menyimpan skor: '+e.message,'error'); }
+  }
+
+  window.keDashboard  = () => window.location.href='dashboard.html';
+  window.keDaftarKuis = () => { renderDaftar(); showScreen('screen-daftar'); };
+
+  init();
+</script>
+</body>
+</html>
