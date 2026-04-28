@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Progres — LMS SD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{--blue:#3B82F6;--indigo:#6366F1;--green:#22C55E;--yellow:#F59E0B;--coral:#FF6B6B;--purple:#A855F7;--bg:#F1F5F9;--white:#fff;--text:#1E293B;--muted:#64748B;--border:#E2E8F0;}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;}
+
+    /* TOPBAR */
+    .topbar{background:linear-gradient(135deg,#3B82F6,#6366F1);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(59,130,246,.3);}
+    .topbar-left{display:flex;align-items:center;gap:16px;}
+    .topbar a{color:rgba(255,255,255,.75);text-decoration:none;font-size:14px;font-weight:700;}
+    .topbar a:hover{color:#fff;}
+    .topbar h1{font-family:'Fredoka One',cursive;color:#fff;font-size:20px;}
+    .btn-logout{background:rgba(255,255,255,.2);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+    .btn-logout:hover{background:rgba(255,255,255,.3);}
+
+    .container{max-width:1100px;margin:0 auto;padding:28px 24px 48px;}
+
+    /* SUMMARY CARDS */
+    .summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:28px;}
+    .sum-card{background:var(--white);border-radius:18px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;align-items:center;gap:14px;}
+    .sum-icon{font-size:36px;flex-shrink:0;}
+    .sum-val{font-family:'Fredoka One',cursive;font-size:28px;color:var(--text);}
+    .sum-lbl{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;}
+
+    /* FILTER */
+    .filter-bar{background:var(--white);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+    .filter-bar label{font-size:13px;font-weight:700;color:var(--muted);}
+    .filter-btn{padding:6px 14px;border:2px solid var(--border);border-radius:20px;background:#F8FAFC;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s;}
+    .filter-btn.active,.filter-btn:hover{border-color:var(--blue);background:var(--blue);color:#fff;}
+    .sort-select{margin-left:auto;padding:8px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;background:#F8FAFC;}
+    .sort-select:focus{border-color:var(--blue);}
+
+    /* TABLE */
+    .table-card{background:var(--white);border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden;}
+    .table-header{padding:18px 24px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .table-header h3{font-family:'Fredoka One',cursive;font-size:18px;color:var(--text);}
+    .table-header span{font-size:13px;color:var(--muted);font-weight:700;}
+    .tbl{width:100%;border-collapse:collapse;}
+    .tbl th{padding:12px 18px;text-align:left;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;background:#F8FAFC;border-bottom:1.5px solid var(--border);}
+    .tbl td{padding:14px 18px;border-bottom:1px solid #F1F5F9;font-size:13px;color:var(--text);vertical-align:middle;}
+    .tbl tr:last-child td{border-bottom:none;}
+    .tbl tr:hover td{background:#FAFCFF;}
+    .kelas-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;}
+    .k1{background:#FEF3C7;color:#92400E;}.k2{background:#D1FAE5;color:#065F46;}
+    .k3{background:#DBEAFE;color:#1E40AF;}.k4{background:#EDE9FE;color:#5B21B6;}
+    .k5{background:#FCE7F3;color:#9D174D;}.k6{background:#FEE2E2;color:#991B1B;}
+
+    /* PROGRESS BAR in table */
+    .mini-bar-bg{background:#F1F5F9;border-radius:20px;height:8px;width:100%;overflow:hidden;min-width:80px;}
+    .mini-bar-fill{height:100%;border-radius:20px;transition:width .6s ease;}
+    .bar-green{background:linear-gradient(90deg,#22C55E,#16A34A);}
+    .bar-yellow{background:linear-gradient(90deg,#F59E0B,#D97706);}
+    .bar-red{background:linear-gradient(90deg,#EF4444,#DC2626);}
+    .bar-gray{background:#CBD5E1;}
+
+    /* NILAI CHIP */
+    .nilai-chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:800;}
+    .nilai-good{background:#D1FAE5;color:#065F46;}
+    .nilai-mid{background:#FEF3C7;color:#92400E;}
+    .nilai-low{background:#FEE2E2;color:#991B1B;}
+    .nilai-none{background:#F1F5F9;color:var(--muted);}
+
+    /* POIN */
+    .poin-display{font-family:'Fredoka One',cursive;font-size:16px;color:var(--yellow);}
+
+    /* RANK */
+    .rank{font-family:'Fredoka One',cursive;font-size:16px;}
+    .rank-1{color:#F59E0B;}.rank-2{color:#94A3B8;}.rank-3{color:#B45309;}
+
+    /* DETAIL MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--white);border-radius:20px;width:100%;max-width:580px;margin:20px;max-height:88vh;overflow-y:auto;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);}
+    @keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .modal-header{padding:22px 26px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);}
+    .modal-header h3{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);}
+    .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);}
+    .modal-body{padding:22px 26px 28px;}
+    .detail-section{margin-bottom:20px;}
+    .detail-section h4{font-family:'Fredoka One',cursive;font-size:16px;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--border);}
+    .detail-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+    .detail-stat{background:#F8FAFC;border-radius:12px;padding:12px;text-align:center;}
+    .detail-stat .dval{font-family:'Fredoka One',cursive;font-size:22px;color:var(--text);}
+    .detail-stat .dlbl{font-size:11px;color:var(--muted);font-weight:700;}
+    .kuis-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F1F5F9;font-size:13px;}
+    .kuis-row:last-child{border-bottom:none;}
+    .kuis-row .kname{font-weight:700;color:var(--text);flex:1;}
+    .kuis-row .kmeta{color:var(--muted);font-size:12px;}
+    .materi-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:13px;}
+    .materi-row:last-child{border-bottom:none;}
+    .materi-row .check{color:var(--green);font-size:16px;}
+    .empty-detail{text-align:center;padding:24px;color:var(--muted);font-size:13px;font-weight:600;}
+
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-state div{font-size:48px;margin-bottom:12px;}
+    .empty-state p{font-size:15px;font-weight:600;}
+
+    @media(max-width:768px){
+      .container{padding:16px 14px 40px;}
+      .tbl th:nth-child(4),.tbl td:nth-child(4),.tbl th:nth-child(5),.tbl td:nth-child(5){display:none;}
+      .summary-grid{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="dashboard.html">← Dashboard</a>
+    <h1>📊 Laporan Progres</h1>
+  </div>
+  <button class="btn-logout" onclick="doLogout()">Keluar</button>
+</div>
+
+<div class="container">
+
+  <!-- SUMMARY -->
+  <div class="summary-grid">
+    <div class="sum-card"><div class="sum-icon">👨‍🎓</div><div><div class="sum-val" id="sum-siswa">–</div><div class="sum-lbl">Total Siswa</div></div></div>
+    <div class="sum-card"><div class="sum-icon">📖</div><div><div class="sum-val" id="sum-materi">–</div><div class="sum-lbl">Total Materi</div></div></div>
+    <div class="sum-card"><div class="sum-icon">🎯</div><div><div class="sum-val" id="sum-kuis">–</div><div class="sum-lbl">Total Kuis</div></div></div>
+    <div class="sum-card"><div class="sum-icon">⭐</div><div><div class="sum-val" id="sum-poin">–</div><div class="sum-lbl">Rata-rata Poin</div></div></div>
+    <div class="sum-card"><div class="sum-icon">📈</div><div><div class="sum-val" id="sum-nilai">–</div><div class="sum-lbl">Rata-rata Nilai</div></div></div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <label>Kelas:</label>
+    <button class="filter-btn active" onclick="setKelas(this,0)">Semua</button>
+    <button class="filter-btn" onclick="setKelas(this,1)">1</button>
+    <button class="filter-btn" onclick="setKelas(this,2)">2</button>
+    <button class="filter-btn" onclick="setKelas(this,3)">3</button>
+    <button class="filter-btn" onclick="setKelas(this,4)">4</button>
+    <button class="filter-btn" onclick="setKelas(this,5)">5</button>
+    <button class="filter-btn" onclick="setKelas(this,6)">6</button>
+    <select class="sort-select" onchange="setSort(this.value)">
+      <option value="nama">Urutkan: Nama A–Z</option>
+      <option value="kelas">Urutkan: Kelas</option>
+      <option value="poin">Urutkan: Poin Tertinggi</option>
+      <option value="nilai">Urutkan: Nilai Tertinggi</option>
+      <option value="materi">Urutkan: Materi Terbanyak</option>
+    </select>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="table-header">
+      <h3>Daftar Progres Siswa</h3>
+      <span id="jumlah-label">Memuat...</span>
+    </div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nama Siswa</th>
+          <th>Kelas</th>
+          <th>Materi Selesai</th>
+          <th>Rata-rata Nilai</th>
+          <th>Total Poin</th>
+          <th>Detail</th>
+        </tr>
+      </thead>
+      <tbody id="tabel-laporan">
+        <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">⏳ Memuat data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="detail-nama">Detail Siswa</h3>
+      <button class="modal-close" onclick="tutupDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body">
+      <div class="empty-detail">⏳ Memuat detail...</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { db }                        from "../assets/js/firebase-config.js";
+  import { guardAdmin, logout }        from "../assets/js/auth.js";
+  import {
+    collection, getDocs, doc, getDoc, query, where, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  guardAdmin();
+  window.doLogout = logout;
+
+  let allData     = [];   // [{siswa, progres}]
+  let allMateri   = [];
+  let allKuis     = [];
+  let kelasFilter = 0;
+  let sortBy      = 'nama';
+
+  /* ── Load semua data ── */
+  async function loadAll() {
+    try {
+      // Siswa
+      const sSnap  = await getDocs(query(collection(db,'users'), where('role','==','siswa'), orderBy('kelas'), orderBy('nama')));
+      const siswaList = sSnap.docs.map(d=>({uid:d.id,...d.data()}));
+
+      // Materi & Kuis (semua kelas)
+      const mSnap = await getDocs(collection(db,'materi'));
+      const kSnap = await getDocs(collection(db,'kuis'));
+      allMateri   = mSnap.docs.map(d=>({id:d.id,...d.data()}));
+      allKuis     = kSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+      // Progres tiap siswa
+      allData = await Promise.all(siswaList.map(async s => {
+        const pSnap   = await getDoc(doc(db,'progres',s.uid));
+        const progres = pSnap.exists() ? pSnap.data() : { poin_total:0, materi_selesai:[], kuis_hasil:{}, badge:[] };
+        return { siswa:s, progres };
+      }));
+
+      updateSummary();
+      render();
+    } catch(e) {
+      document.getElementById('tabel-laporan').innerHTML =
+        `<tr><td colspan="7" style="text-align:center;padding:30px;color:#EF4444">❌ Gagal memuat: ${e.message}</td></tr>`;
+    }
+  }
+
+  /* ── Summary stats ── */
+  function updateSummary() {
+    const total     = allData.length;
+    const allPoin   = allData.map(d=>d.progres.poin_total||0);
+    const allNilai  = allData.flatMap(d=>Object.values(d.progres.kuis_hasil||{}).map(h=>h.skor||0));
+    const avgPoin   = total ? Math.round(allPoin.reduce((a,b)=>a+b,0)/total) : 0;
+    const avgNilai  = allNilai.length ? Math.round(allNilai.reduce((a,b)=>a+b,0)/allNilai.length) : 0;
+
+    document.getElementById('sum-siswa').textContent  = total;
+    document.getElementById('sum-materi').textContent = allMateri.length;
+    document.getElementById('sum-kuis').textContent   = allKuis.length;
+    document.getElementById('sum-poin').textContent   = avgPoin;
+    document.getElementById('sum-nilai').textContent  = avgNilai || '–';
+  }
+
+  /* ── Render tabel ── */
+  function render() {
+    let data = [...allData];
+    if (kelasFilter) data = data.filter(d=>d.siswa.kelas==kelasFilter);
+
+    // Sort
+    data.sort((a,b)=>{
+      if (sortBy==='nama')   return a.siswa.nama.localeCompare(b.siswa.nama);
+      if (sortBy==='kelas')  return a.siswa.kelas - b.siswa.kelas;
+      if (sortBy==='poin')   return (b.progres.poin_total||0) - (a.progres.poin_total||0);
+      if (sortBy==='nilai')  return avgNilaiSiswa(b) - avgNilaiSiswa(a);
+      if (sortBy==='materi') return (b.progres.materi_selesai||[]).length - (a.progres.materi_selesai||[]).length;
+      return 0;
+    });
+
+    document.getElementById('jumlah-label').textContent = `${data.length} siswa`;
+
+    const tbody = document.getElementById('tabel-laporan');
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div>👀</div><p>Tidak ada data siswa</p></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map((d,i) => {
+      const s         = d.siswa;
+      const p         = d.progres;
+      const poin      = p.poin_total || 0;
+      const selesai   = (p.materi_selesai||[]).length;
+      const totalM    = allMateri.filter(m=>m.kelas==s.kelas).length;
+      const avgN      = avgNilaiSiswa(d);
+      const pct       = totalM ? Math.round((selesai/totalM)*100) : 0;
+      const barClass  = pct>=70 ? 'bar-green' : pct>=40 ? 'bar-yellow' : pct>0 ? 'bar-red' : 'bar-gray';
+      const nilaiClass= avgN>=70 ? 'nilai-good' : avgN>=50 ? 'nilai-mid' : avgN>0 ? 'nilai-low' : 'nilai-none';
+
+      return `
+      <tr>
+        <td style="color:var(--muted);font-weight:700">${i+1}</td>
+        <td><strong>${s.nama}</strong></td>
+        <td><span class="kelas-badge k${s.kelas}">Kelas ${s.kelas}</span></td>
+        <td>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px;color:var(--muted)">${selesai}/${totalM} materi</div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+        </td>
+        <td><span class="nilai-chip ${nilaiClass}">${avgN>0 ? avgN : '–'}</span></td>
+        <td><span class="poin-display">⭐ ${poin}</span></td>
+        <td>
+          <button style="background:#EFF6FF;color:var(--blue);border:1.5px solid #BFDBFE;padding:6px 14px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;"
+            onclick="window._lihatDetail('${s.uid}')">👁️ Lihat</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function avgNilaiSiswa(d) {
+    const vals = Object.values(d.progres.kuis_hasil||{}).map(h=>h.skor||0);
+    return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+  }
+
+  window.setKelas = (btn, val) => {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); kelasFilter=val; render();
+  };
+  window.setSort = (val) => { sortBy=val; render(); };
+
+  /* ── Detail Modal ── */
+  window._lihatDetail = async (uid) => {
+    const entry = allData.find(d=>d.siswa.uid===uid);
+    if (!entry) return;
+    const { siswa, progres } = entry;
+    document.getElementById('detail-nama').textContent = `📋 ${siswa.nama} — Kelas ${siswa.kelas}`;
+    document.getElementById('modal-detail').classList.add('open');
+
+    const body        = document.getElementById('detail-body');
+    const poin        = progres.poin_total || 0;
+    const selesai     = progres.materi_selesai || [];
+    const kuisHasil   = progres.kuis_hasil || {};
+    const badge       = progres.badge || [];
+    const kuisEntries = Object.entries(kuisHasil);
+    const allNilai    = kuisEntries.map(([,h])=>h.skor||0);
+    const avgN        = allNilai.length ? Math.round(allNilai.reduce((a,b)=>a+b,0)/allNilai.length) : 0;
+
+    // Ambil detail materi dan kuis
+    const materiSiswa = allMateri.filter(m=>m.kelas==siswa.kelas);
+    const kuisSiswa   = allKuis.filter(k=>k.kelas==siswa.kelas);
+
+    // Build kuis rows
+    let kuisRows = '';
+    for (const k of kuisSiswa) {
+      const hasil = kuisHasil[k.id];
+      if (hasil) {
+        const cls = hasil.skor>=70?'nilai-good':hasil.skor>=50?'nilai-mid':'nilai-low';
+        kuisRows += `<div class="kuis-row">
+          <span class="kname">${k.judul}</span>
+          <span class="kmeta">${hasil.benar||0}/${hasil.total||0} benar &nbsp;•&nbsp; ${hasil.tanggal||''}</span>
+          <span class="nilai-chip ${cls}" style="margin-left:10px">${hasil.skor}</span>
+        </div>`;
+      } else {
+        kuisRows += `<div class="kuis-row">
+          <span class="kname" style="color:var(--muted)">${k.judul}</span>
+          <span class="kmeta">Belum dikerjakan</span>
+          <span class="nilai-chip nilai-none" style="margin-left:10px">–</span>
+        </div>`;
+      }
+    }
+
+    // Build materi rows
+    let materiRows = '';
+    for (const m of materiSiswa) {
+      const sudah = selesai.includes(m.id);
+      materiRows += `<div class="materi-row">
+        <span class="check">${sudah?'✅':'⬜'}</span>
+        <span style="font-weight:${sudah?700:400};color:${sudah?'var(--text)':'var(--muted)'}">${m.judul}</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted)">${m.mapel||''}</span>
+      </div>`;
+    }
+
+    body.innerHTML = `
+      <div class="detail-stat-row">
+        <div class="detail-stat"><div class="dval" style="color:var(--yellow)">⭐ ${poin}</div><div class="dlbl">Total Poin</div></div>
+        <div class="detail-stat"><div class="dval" style="color:var(--green)">${selesai.length}/${materiSiswa.length}</div><div class="dlbl">Materi Selesai</div></div>
+        <div class="detail-stat"><div class="dval" style="color:var(--blue)">${avgN||'–'}</div><div class="dlbl">Rata-rata Nilai</div></div>
+      </div>
+      <div class="detail-section">
+        <h4>🏅 Badge Diraih (${badge.length})</h4>
+        ${badge.length
+          ? `<div style="display:flex;flex-wrap:wrap;gap:6px">${badge.map(b=>`<span style="background:#EDE9FE;color:#5B21B6;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700">${b}</span>`).join('')}</div>`
+          : `<div class="empty-detail">Belum ada badge</div>`}
+      </div>
+      <div class="detail-section">
+        <h4>🎯 Hasil Kuis</h4>
+        ${kuisSiswa.length ? kuisRows : '<div class="empty-detail">Belum ada kuis untuk kelas ini</div>'}
+      </div>
+      <div class="detail-section">
+        <h4>📖 Materi Dibaca</h4>
+        ${materiSiswa.length ? materiRows : '<div class="empty-detail">Belum ada materi untuk kelas ini</div>'}
+      </div>
+    `;
+  };
+
+  window.tutupDetail = () => document.getElementById('modal-detail').classList.remove('open');
+  document.getElementById('modal-detail').addEventListener('click', e => {
+    if (e.target.id==='modal-detail') window.tutupDetail();
+  });
+
+  loadAll();
+</script>
+</body>
+</html>
