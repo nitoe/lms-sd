@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belajar Yuk! — LMS SD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Nunito',sans-serif;background:#EEF6FF;min-height:100vh;}
+    .topbar{background:linear-gradient(135deg,#22C55E,#16A34A);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .topbar h1{font-family:'Fredoka One',cursive;color:white;font-size:20px;}
+    .btn-logout{background:rgba(255,255,255,.2);color:white;border:none;padding:8px 16px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;}
+    .container{max-width:700px;margin:32px auto;padding:0 20px;}
+    .hero{background:white;border-radius:20px;padding:28px;margin-bottom:24px;box-shadow:0 4px 16px rgba(0,0,0,.07);text-align:center;}
+    .hero-avatar{font-size:64px;margin-bottom:12px;}
+    .hero h2{font-family:'Fredoka One',cursive;font-size:24px;color:#1E293B;margin-bottom:6px;}
+    .hero p{color:#64748B;font-size:14px;}
+    .poin-badge{display:inline-flex;align-items:center;gap:6px;background:#FFF9C4;color:#A16207;padding:6px 16px;border-radius:20px;font-weight:800;font-size:15px;margin-top:12px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .card{background:white;border-radius:20px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,.07);text-decoration:none;display:block;transition:.2s;text-align:center;}
+    .card:hover{transform:translateY(-4px);}
+    .card-icon{font-size:48px;margin-bottom:10px;}
+    .card h3{font-family:'Fredoka One',cursive;font-size:18px;color:#1E293B;margin-bottom:4px;}
+    .card p{font-size:13px;color:#64748B;}
+    @media(max-width:480px){.grid{grid-template-columns:1fr;}.container{padding:0 16px;}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>📚 Rumah Belajar Kita</h1>
+  <button class="btn-logout" onclick="doLogout()">Keluar</button>
+</div>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-avatar">🧒</div>
+    <h2>Halo, <span id="nama-siswa">Teman</span>!</h2>
+    <p>Kelas <span id="kelas-siswa">?</span> &nbsp;•&nbsp; Ayo semangat belajar hari ini! 🌟</p>
+    <div class="poin-badge">⭐ <span id="poin-siswa">0</span> Poin</div>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="materi.html">
+      <div class="card-icon">📖</div>
+      <h3>Baca Materi</h3>
+      <p>Pelajari materi seru sesuai kelasmu</p>
+    </a>
+    <a class="card" href="kuis.html">
+      <div class="card-icon">🎯</div>
+      <h3>Kerjakan Kuis</h3>
+      <p>Uji kemampuanmu dan kumpulkan poin!</p>
+    </a>
+    <a class="card" href="profil.html">
+      <div class="card-icon">🏆</div>
+      <h3>Badge Saya</h3>
+      <p>Lihat semua pencapaianmu</p>
+    </a>
+    <a class="card" href="profil.html">
+      <div class="card-icon">📈</div>
+      <h3>Nilai Saya</h3>
+      <p>Pantau hasil belajarmu</p>
+    </a>
+  </div>
+</div>
+
+<script type="module">
+  import { guardSiswa, getCurrentUserData } from "../assets/js/auth.js";
+  import { logout } from "../assets/js/auth.js";
+
+  // Proteksi halaman — hanya siswa yang boleh masuk
+  guardSiswa();
+
+  // Tampilkan data siswa
+  getCurrentUserData().then(user => {
+    if (user) {
+      document.getElementById('nama-siswa').textContent = user.nama || 'Teman';
+      document.getElementById('kelas-siswa').textContent = user.kelas || '?';
+      document.getElementById('poin-siswa').textContent = user.poin_total || 0;
+    }
+  });
+
+  window.doLogout = logout;
+</script>
+</body>
+</html>
