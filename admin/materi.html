@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Materi — LMS SD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{--blue:#3B82F6;--indigo:#6366F1;--green:#22C55E;--red:#EF4444;--orange:#F97316;--bg:#F1F5F9;--white:#fff;--text:#1E293B;--muted:#64748B;--border:#E2E8F0;}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;}
+    .topbar{background:linear-gradient(135deg,#3B82F6,#6366F1);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(59,130,246,.3);}
+    .topbar-left{display:flex;align-items:center;gap:16px;}
+    .topbar a{color:rgba(255,255,255,.75);text-decoration:none;font-size:14px;font-weight:700;}
+    .topbar a:hover{color:#fff;}
+    .topbar h1{font-family:'Fredoka One',cursive;color:#fff;font-size:20px;}
+    .btn-logout{background:rgba(255,255,255,.2);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+    .btn-logout:hover{background:rgba(255,255,255,.3);}
+    .container{max-width:1100px;margin:28px auto;padding:0 24px;}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+    .page-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--text);}
+    .page-header p{font-size:13px;color:var(--muted);margin-top:2px;}
+    .btn{padding:10px 20px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--indigo));color:#fff;box-shadow:0 3px 10px rgba(59,130,246,.3);}
+    .btn-primary:hover{transform:translateY(-1px);}
+    .btn-danger{background:#FEF2F2;color:var(--red);border:1.5px solid #FECACA;}
+    .btn-danger:hover{background:var(--red);color:#fff;}
+    .btn-edit{background:#EFF6FF;color:var(--blue);border:1.5px solid #BFDBFE;}
+    .btn-edit:hover{background:var(--blue);color:#fff;}
+    .btn-sm{padding:6px 12px;font-size:12px;border-radius:8px;}
+    .filter-bar{background:var(--white);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+    .filter-bar label{font-size:13px;font-weight:700;color:var(--muted);}
+    .filter-btn{padding:6px 14px;border:2px solid var(--border);border-radius:20px;background:#F8FAFC;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s;}
+    .filter-btn.active,.filter-btn:hover{border-color:var(--blue);background:var(--blue);color:#fff;}
+
+    /* CARDS GRID */
+    .materi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+    .materi-card{background:var(--white);border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden;transition:.2s;}
+    .materi-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1);}
+    .materi-card-header{padding:16px 20px;background:linear-gradient(135deg,#F0F9FF,#E0F2FE);}
+    .materi-card-header .mapel-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+    .materi-card-header h3{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);margin-bottom:4px;}
+    .materi-card-header .meta{font-size:12px;color:var(--muted);display:flex;gap:10px;}
+    .materi-card-body{padding:14px 20px;font-size:13px;color:var(--muted);line-height:1.5;}
+    .materi-card-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;}
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;}
+    .empty-state div{font-size:48px;margin-bottom:12px;}
+    .empty-state p{font-size:15px;font-weight:600;}
+
+    /* MAPEL COLORS */
+    .mapel-mat{background:#DBEAFE;color:#1E40AF;} .mapel-ipa{background:#D1FAE5;color:#065F46;}
+    .mapel-ips{background:#FEF3C7;color:#92400E;} .mapel-bindo{background:#EDE9FE;color:#5B21B6;}
+    .mapel-bind{background:#FCE7F3;color:#9D174D;} .mapel-lain{background:#F1F5F9;color:#475569;}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--white);border-radius:20px;width:100%;max-width:680px;margin:20px;max-height:90vh;overflow-y:auto;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);}
+    @keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .modal-header{padding:22px 28px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1;}
+    .modal-header h3{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);}
+    .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);}
+    .modal-body{padding:24px 28px;}
+    .modal-footer{padding:16px 28px 24px;display:flex;gap:10px;justify-content:flex-end;border-top:1.5px solid var(--border);}
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .field{margin-bottom:16px;}
+    .field label{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+    .field input,.field select,.field textarea{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);background:#F8FAFC;outline:none;transition:.2s;resize:vertical;}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);background:#fff;}
+    .field textarea{min-height:200px;line-height:1.6;}
+    .field .hint{font-size:12px;color:var(--muted);margin-top:4px;}
+    .preview-box{background:#FAFCFF;border:1.5px solid var(--border);border-radius:10px;padding:16px;margin-top:8px;max-height:200px;overflow-y:auto;font-size:14px;line-height:1.7;color:var(--text);}
+
+    /* EDITOR TOOLBAR */
+    .editor-toolbar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;}
+    .toolbar-btn{padding:5px 10px;border:1.5px solid var(--border);border-radius:6px;background:#F8FAFC;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;font-family:'Nunito',sans-serif;}
+    .toolbar-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+    .toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:12px;font-weight:700;font-size:14px;color:#fff;z-index:300;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.success{background:#22C55E;} .toast.error{background:#EF4444;}
+    .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:250;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+    .confirm-overlay.open{display:flex;}
+    .confirm-box{background:#fff;border-radius:16px;padding:28px;max-width:360px;width:calc(100% - 40px);text-align:center;}
+    .confirm-box .icon{font-size:44px;margin-bottom:12px;}
+    .confirm-box h4{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);margin-bottom:8px;}
+    .confirm-box p{font-size:14px;color:var(--muted);margin-bottom:20px;}
+    .confirm-btns{display:flex;gap:10px;justify-content:center;}
+    @media(max-width:640px){.row-2{grid-template-columns:1fr;}.container{padding:0 16px;}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="dashboard.html">← Dashboard</a>
+    <h1>📖 Kelola Materi</h1>
+  </div>
+  <button class="btn-logout" onclick="doLogout()">Keluar</button>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h2>Materi Pelajaran</h2>
+      <p>Buat dan kelola materi per kelas dan mata pelajaran</p>
+    </div>
+    <button class="btn btn-primary" onclick="bukaModalTambah()">＋ Buat Materi</button>
+  </div>
+
+  <div class="filter-bar">
+    <label>Kelas:</label>
+    <button class="filter-btn active" onclick="setFilter(this,'kelas',0)">Semua</button>
+    <button class="filter-btn" onclick="setFilter(this,'kelas',1)">1</button>
+    <button class="filter-btn" onclick="setFilter(this,'kelas',2)">2</button>
+    <button class="filter-btn" onclick="setFilter(this,'kelas',3)">3</button>
+    <button class="filter-btn" onclick="setFilter(this,'kelas',4)">4</button>
+    <button class="filter-btn" onclick="setFilter(this,'kelas',5)">5</button>
+    <button class="filter-btn" onclick="setFilter(this,'kelas',6)">6</button>
+    <label style="margin-left:8px">Mapel:</label>
+    <button class="filter-btn active" id="mapel-all" onclick="setMapelFilter(this,'')">Semua</button>
+    <button class="filter-btn" onclick="setMapelFilter(this,'matematika')">Mat</button>
+    <button class="filter-btn" onclick="setMapelFilter(this,'ipa')">IPA</button>
+    <button class="filter-btn" onclick="setMapelFilter(this,'ips')">IPS</button>
+    <button class="filter-btn" onclick="setMapelFilter(this,'b.indonesia')">B.Indo</button>
+    <button class="filter-btn" onclick="setMapelFilter(this,'b.inggris')">B.Ing</button>
+  </div>
+
+  <div class="materi-grid" id="materi-grid">
+    <div class="empty-state"><div>⏳</div><p>Memuat materi...</p></div>
+  </div>
+</div>
+
+<!-- MODAL MATERI -->
+<div class="modal-overlay" id="modal-materi">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-judul">📝 Buat Materi Baru</h3>
+      <button class="modal-close" onclick="tutupModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <div class="field">
+        <label>Judul Materi</label>
+        <input type="text" id="input-judul" placeholder="cth: Penjumlahan Bilangan 1-10">
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Kelas</label>
+          <select id="input-kelas">
+            <option value="">-- Pilih --</option>
+            <option value="1">Kelas 1</option><option value="2">Kelas 2</option>
+            <option value="3">Kelas 3</option><option value="4">Kelas 4</option>
+            <option value="5">Kelas 5</option><option value="6">Kelas 6</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Mata Pelajaran</label>
+          <select id="input-mapel">
+            <option value="">-- Pilih --</option>
+            <option value="matematika">Matematika</option>
+            <option value="ipa">IPA</option>
+            <option value="ips">IPS</option>
+            <option value="b.indonesia">Bahasa Indonesia</option>
+            <option value="b.inggris">Bahasa Inggris</option>
+            <option value="pkn">PKN</option>
+            <option value="seni">Seni Budaya</option>
+            <option value="pjok">PJOK</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Isi Materi</label>
+        <div class="editor-toolbar">
+          <button class="toolbar-btn" onclick="insertTag('<strong>','</strong>')"><b>B</b></button>
+          <button class="toolbar-btn" onclick="insertTag('<em>','</em>')"><i>I</i></button>
+          <button class="toolbar-btn" onclick="insertTag('<u>','</u>')"><u>U</u></button>
+          <button class="toolbar-btn" onclick="insertTag('<h3>','</h3>')">H3</button>
+          <button class="toolbar-btn" onclick="insertTag('<ul>\n  <li>','</li>\n</ul>')">• List</button>
+          <button class="toolbar-btn" onclick="insertTag('<li>','</li>')">• Item</button>
+          <button class="toolbar-btn" onclick="insertTag('<br>','')">↵ BR</button>
+          <button class="toolbar-btn" onclick="togglePreview()">👁️ Preview</button>
+        </div>
+        <textarea id="input-konten" placeholder="Tulis isi materi di sini. Kamu bisa pakai tag HTML sederhana seperti <strong>, <em>, <h3>, <ul><li>..." oninput="updatePreview()"></textarea>
+        <div class="hint">Gunakan toolbar di atas untuk memformat teks. Klik Preview untuk melihat hasilnya.</div>
+        <div class="preview-box" id="konten-preview" style="display:none"></div>
+      </div>
+      <div class="field">
+        <label>URL Gambar (opsional)</label>
+        <input type="text" id="input-gambar" placeholder="https://... (URL gambar dari internet)">
+        <div class="hint">Paste URL gambar dari internet. Kosongkan jika tidak ada gambar.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:#F1F5F9;color:var(--muted);" onclick="tutupModal()">Batal</button>
+      <button class="btn btn-primary" id="btn-simpan" onclick="simpanMateri()">💾 Simpan Materi</button>
+    </div>
+  </div>
+</div>
+
+<!-- KONFIRMASI HAPUS -->
+<div class="confirm-overlay" id="confirm-hapus">
+  <div class="confirm-box">
+    <div class="icon">🗑️</div>
+    <h4>Hapus Materi?</h4>
+    <p>Materi "<strong id="judul-hapus"></strong>" akan dihapus permanen.</p>
+    <div class="confirm-btns">
+      <button class="btn" style="background:#F1F5F9;color:var(--muted);" onclick="tutupKonfirmasi()">Batal</button>
+      <button class="btn btn-danger" onclick="konfirmasiHapus()">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { db } from "../assets/js/firebase-config.js";
+  import { guardAdmin, logout } from "../assets/js/auth.js";
+  import {
+    collection, getDocs, doc, addDoc, updateDoc, deleteDoc, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  guardAdmin();
+  window.doLogout = logout;
+
+  let semuaMateri = [];
+  let kelasFilter = 0;
+  let mapelFilter = '';
+  let hapusId     = null;
+  let showPreview = false;
+
+  const MAPEL_LABEL = {
+    'matematika':'Matematika','ipa':'IPA','ips':'IPS',
+    'b.indonesia':'B. Indonesia','b.inggris':'B. Inggris',
+    'pkn':'PKN','seni':'Seni','pjok':'PJOK'
+  };
+  const MAPEL_CLASS = {
+    'matematika':'mapel-mat','ipa':'mapel-ipa','ips':'mapel-ips',
+    'b.indonesia':'mapel-bindo','b.inggris':'mapel-bind'
+  };
+
+  function toast(msg, type="success") {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.className = `toast ${type} show`;
+    setTimeout(()=>el.classList.remove('show'),3000);
+  }
+
+  async function muatMateri() {
+    try {
+      const q    = query(collection(db,"materi"), orderBy("kelas"), orderBy("judul"));
+      const snap = await getDocs(q);
+      semuaMateri = snap.docs.map(d=>({id:d.id,...d.data()}));
+      renderGrid();
+    } catch(e) {
+      document.getElementById('materi-grid').innerHTML =
+        `<div class="empty-state"><div>⚠️</div><p>Gagal memuat: ${e.message}</p></div>`;
+    }
+  }
+
+  function renderGrid() {
+    let data = semuaMateri;
+    if (kelasFilter) data = data.filter(m=>m.kelas==kelasFilter);
+    if (mapelFilter) data = data.filter(m=>m.mapel===mapelFilter);
+    const grid = document.getElementById('materi-grid');
+    if (!data.length) {
+      grid.innerHTML = `<div class="empty-state"><div>📭</div><p>Belum ada materi. Klik "Buat Materi" untuk memulai!</p></div>`;
+      return;
+    }
+    grid.innerHTML = data.map(m => {
+      const cls   = MAPEL_CLASS[m.mapel] || 'mapel-lain';
+      const label = MAPEL_LABEL[m.mapel] || m.mapel;
+      const strip = (m.konten||'').replace(/<[^>]+>/g,'').substring(0,100);
+      return `
+      <div class="materi-card">
+        <div class="materi-card-header">
+          <span class="mapel-badge ${cls}">${label}</span>
+          <h3>${m.judul}</h3>
+          <div class="meta"><span>📚 Kelas ${m.kelas}</span></div>
+        </div>
+        <div class="materi-card-body">${strip}${strip.length>=100?'...':''}</div>
+        <div class="materi-card-footer">
+          <button class="btn btn-edit btn-sm" onclick="window._editMateri('${m.id}')">✏️ Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="window._hapusMateri('${m.id}','${m.judul.replace(/'/g,"\\'")}')">🗑️ Hapus</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  window.setFilter = (btn, type, val) => {
+    btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b=>{
+      if(b.dataset.group===type||!b.dataset.group) b.classList.remove('active');
+    });
+    // simpler: just filter kelas buttons
+    document.querySelectorAll('.filter-bar .filter-btn').forEach(b=>{
+      if(b.onclick?.toString().includes("'kelas'")) b.classList.remove('active');
+    });
+    btn.classList.add('active');
+    kelasFilter = val; renderGrid();
+  };
+  window.setMapelFilter = (btn, val) => {
+    document.querySelectorAll('.filter-bar .filter-btn').forEach(b=>{
+      if(b.onclick?.toString().includes('setMapelFilter')) b.classList.remove('active');
+    });
+    btn.classList.add('active');
+    mapelFilter = val; renderGrid();
+  };
+
+  window.insertTag = (open, close) => {
+    const ta = document.getElementById('input-konten');
+    const s = ta.selectionStart, e = ta.selectionEnd;
+    const sel = ta.value.substring(s,e);
+    ta.value = ta.value.substring(0,s) + open + sel + close + ta.value.substring(e);
+    ta.focus(); ta.selectionStart = s + open.length; ta.selectionEnd = s + open.length + sel.length;
+    updatePreview();
+  };
+  window.updatePreview = () => {
+    if (showPreview)
+      document.getElementById('konten-preview').innerHTML = document.getElementById('input-konten').value;
+  };
+  window.togglePreview = () => {
+    showPreview = !showPreview;
+    const prev = document.getElementById('konten-preview');
+    prev.style.display = showPreview ? 'block' : 'none';
+    if (showPreview) prev.innerHTML = document.getElementById('input-konten').value;
+  };
+
+  window.bukaModalTambah = () => {
+    document.getElementById('modal-judul').textContent = '📝 Buat Materi Baru';
+    document.getElementById('edit-id').value      = '';
+    document.getElementById('input-judul').value  = '';
+    document.getElementById('input-kelas').value  = '';
+    document.getElementById('input-mapel').value  = '';
+    document.getElementById('input-konten').value = '';
+    document.getElementById('input-gambar').value = '';
+    document.getElementById('konten-preview').style.display = 'none';
+    showPreview = false;
+    document.getElementById('modal-materi').classList.add('open');
+  };
+
+  window._editMateri = (id) => {
+    const m = semuaMateri.find(x=>x.id===id);
+    if (!m) return;
+    document.getElementById('modal-judul').textContent  = '✏️ Edit Materi';
+    document.getElementById('edit-id').value      = id;
+    document.getElementById('input-judul').value  = m.judul;
+    document.getElementById('input-kelas').value  = m.kelas;
+    document.getElementById('input-mapel').value  = m.mapel;
+    document.getElementById('input-konten').value = m.konten||'';
+    document.getElementById('input-gambar').value = m.gambar_url||'';
+    document.getElementById('konten-preview').style.display = 'none';
+    showPreview = false;
+    document.getElementById('modal-materi').classList.add('open');
+  };
+
+  window.tutupModal = () => document.getElementById('modal-materi').classList.remove('open');
+
+  window.simpanMateri = async () => {
+    const id     = document.getElementById('edit-id').value;
+    const judul  = document.getElementById('input-judul').value.trim();
+    const kelas  = parseInt(document.getElementById('input-kelas').value);
+    const mapel  = document.getElementById('input-mapel').value;
+    const konten = document.getElementById('input-konten').value.trim();
+    const gambar = document.getElementById('input-gambar').value.trim();
+
+    if (!judul)  return toast('❌ Judul belum diisi!','error');
+    if (!kelas)  return toast('❌ Kelas belum dipilih!','error');
+    if (!mapel)  return toast('❌ Mata pelajaran belum dipilih!','error');
+    if (!konten) return toast('❌ Isi materi belum diisi!','error');
+
+    const btn = document.getElementById('btn-simpan');
+    btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
+
+    try {
+      const data = { judul, kelas, mapel, konten, gambar_url: gambar, updatedAt: new Date().toISOString() };
+      if (id) {
+        await updateDoc(doc(db,"materi",id), data);
+        const idx = semuaMateri.findIndex(m=>m.id===id);
+        if (idx!==-1) semuaMateri[idx] = {...semuaMateri[idx],...data};
+        toast('✅ Materi berhasil diperbarui!');
+      } else {
+        data.createdAt = new Date().toISOString();
+        const ref = await addDoc(collection(db,"materi"), data);
+        semuaMateri.push({id:ref.id,...data});
+        toast('✅ Materi berhasil disimpan!');
+      }
+      renderGrid(); tutupModal();
+    } catch(e) {
+      toast('❌ Gagal: '+e.message,'error');
+    } finally {
+      btn.disabled = false; btn.textContent = '💾 Simpan Materi';
+    }
+  };
+
+  window._hapusMateri = (id, judul) => {
+    hapusId = id;
+    document.getElementById('judul-hapus').textContent = judul;
+    document.getElementById('confirm-hapus').classList.add('open');
+  };
+  window.tutupKonfirmasi = () => document.getElementById('confirm-hapus').classList.remove('open');
+  window.konfirmasiHapus = async () => {
+    if (!hapusId) return;
+    try {
+      await deleteDoc(doc(db,"materi",hapusId));
+      semuaMateri = semuaMateri.filter(m=>m.id!==hapusId);
+      renderGrid(); toast('🗑️ Materi dihapus.'); tutupKonfirmasi();
+    } catch(e) { toast('❌ Gagal: '+e.message,'error'); }
+    hapusId = null;
+  };
+
+  document.getElementById('modal-materi').addEventListener('click', e=>{
+    if(e.target.id==='modal-materi') tutupModal();
+  });
+
+  muatMateri();
+</script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Siswa — LMS SD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --blue:#3B82F6;--indigo:#6366F1;--green:#22C55E;--red:#EF4444;
+      --yellow:#F59E0B;--bg:#F1F5F9;--white:#fff;--text:#1E293B;
+      --muted:#64748B;--border:#E2E8F0;
+    }
+    body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;}
+
+    /* TOPBAR */
+    .topbar{background:linear-gradient(135deg,#3B82F6,#6366F1);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(59,130,246,.3);}
+    .topbar-left{display:flex;align-items:center;gap:16px;}
+    .topbar a{color:rgba(255,255,255,.75);text-decoration:none;font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px;}
+    .topbar a:hover{color:#fff;}
+    .topbar h1{font-family:'Fredoka One',cursive;color:#fff;font-size:20px;}
+    .btn-logout{background:rgba(255,255,255,.2);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+    .btn-logout:hover{background:rgba(255,255,255,.3);}
+
+    /* LAYOUT */
+    .container{max-width:1100px;margin:28px auto;padding:0 24px;}
+
+    /* PAGE HEADER */
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+    .page-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--text);}
+    .page-header p{font-size:13px;color:var(--muted);margin-top:2px;}
+
+    /* BUTTONS */
+    .btn{padding:10px 20px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--indigo));color:#fff;box-shadow:0 3px 10px rgba(59,130,246,.3);}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(59,130,246,.4);}
+    .btn-danger{background:#FEF2F2;color:var(--red);border:1.5px solid #FECACA;}
+    .btn-danger:hover{background:var(--red);color:#fff;}
+    .btn-edit{background:#EFF6FF;color:var(--blue);border:1.5px solid #BFDBFE;}
+    .btn-edit:hover{background:var(--blue);color:#fff;}
+    .btn-sm{padding:6px 12px;font-size:12px;border-radius:8px;}
+
+    /* FILTER BAR */
+    .filter-bar{background:var(--white);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+    .filter-bar label{font-size:13px;font-weight:700;color:var(--muted);}
+    .kelas-filter-btn{padding:6px 14px;border:2px solid var(--border);border-radius:20px;background:#F8FAFC;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s;}
+    .kelas-filter-btn.active,.kelas-filter-btn:hover{border-color:var(--blue);background:var(--blue);color:#fff;}
+    .search-input{margin-left:auto;padding:8px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;outline:none;width:220px;}
+    .search-input:focus{border-color:var(--blue);}
+
+    /* TABLE */
+    .table-card{background:var(--white);border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden;}
+    .table-header{padding:18px 24px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .table-header span{font-size:13px;color:var(--muted);font-weight:700;}
+    .tbl{width:100%;border-collapse:collapse;}
+    .tbl th{padding:12px 20px;text-align:left;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;background:#F8FAFC;border-bottom:1.5px solid var(--border);}
+    .tbl td{padding:14px 20px;border-bottom:1px solid #F1F5F9;font-size:14px;color:var(--text);vertical-align:middle;}
+    .tbl tr:last-child td{border-bottom:none;}
+    .tbl tr:hover td{background:#FAFCFF;}
+    .kelas-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:800;}
+    .k1{background:#FEF3C7;color:#92400E;} .k2{background:#D1FAE5;color:#065F46;}
+    .k3{background:#DBEAFE;color:#1E40AF;} .k4{background:#EDE9FE;color:#5B21B6;}
+    .k5{background:#FCE7F3;color:#9D174D;} .k6{background:#FEE2E2;color:#991B1B;}
+    .email-text{font-size:12px;color:var(--muted);font-family:monospace;}
+    .action-btns{display:flex;gap:8px;}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-state div{font-size:48px;margin-bottom:12px;}
+    .empty-state p{font-size:15px;font-weight:600;}
+
+    /* LOADING */
+    .loading-row td{text-align:center;padding:40px;color:var(--muted);}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--white);border-radius:20px;width:100%;max-width:480px;margin:20px;max-height:90vh;overflow-y:auto;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);}
+    @keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .modal-header{padding:24px 28px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .modal-header h3{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);}
+    .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1;}
+    .modal-body{padding:24px 28px;}
+    .modal-footer{padding:16px 28px 24px;display:flex;gap:10px;justify-content:flex-end;}
+
+    /* FORM */
+    .field{margin-bottom:16px;}
+    .field label{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+    .field input,.field select{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);background:#F8FAFC;outline:none;transition:.2s;}
+    .field input:focus,.field select:focus{border-color:var(--blue);background:#fff;}
+    .field .hint{font-size:12px;color:var(--muted);margin-top:4px;}
+    .email-preview{background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:8px;padding:10px 14px;font-size:13px;color:#15803D;font-family:monospace;margin-top:6px;display:none;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:12px;font-weight:700;font-size:14px;color:#fff;z-index:300;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.success{background:#22C55E;}
+    .toast.error{background:#EF4444;}
+
+    /* DELETE CONFIRM */
+    .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:250;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+    .confirm-overlay.open{display:flex;}
+    .confirm-box{background:#fff;border-radius:16px;padding:28px;max-width:360px;width:calc(100% - 40px);text-align:center;animation:modalIn .25s ease;}
+    .confirm-box .icon{font-size:44px;margin-bottom:12px;}
+    .confirm-box h4{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);margin-bottom:8px;}
+    .confirm-box p{font-size:14px;color:var(--muted);margin-bottom:20px;}
+    .confirm-btns{display:flex;gap:10px;justify-content:center;}
+
+    @media(max-width:640px){
+      .container{padding:0 16px;}
+      .tbl th:nth-child(3),.tbl td:nth-child(3){display:none;}
+      .search-input{width:100%;}
+      .filter-bar{gap:8px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="dashboard.html">← Dashboard</a>
+    <h1>👨‍🎓 Kelola Siswa</h1>
+  </div>
+  <button class="btn-logout" onclick="doLogout()">Keluar</button>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h2>Daftar Siswa</h2>
+      <p>Tambah, edit, dan hapus akun siswa per kelas</p>
+    </div>
+    <button class="btn btn-primary" onclick="bukaModalTambah()">
+      ＋ Tambah Siswa
+    </button>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <label>Kelas:</label>
+    <button class="kelas-filter-btn active" onclick="filterKelas(this, 0)">Semua</button>
+    <button class="kelas-filter-btn" onclick="filterKelas(this, 1)">1</button>
+    <button class="kelas-filter-btn" onclick="filterKelas(this, 2)">2</button>
+    <button class="kelas-filter-btn" onclick="filterKelas(this, 3)">3</button>
+    <button class="kelas-filter-btn" onclick="filterKelas(this, 4)">4</button>
+    <button class="kelas-filter-btn" onclick="filterKelas(this, 5)">5</button>
+    <button class="kelas-filter-btn" onclick="filterKelas(this, 6)">6</button>
+    <input type="text" class="search-input" placeholder="🔍 Cari nama siswa..." oninput="cariSiswa(this.value)">
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="table-header">
+      <span id="jumlah-label">Memuat data...</span>
+    </div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nama Siswa</th>
+          <th>Email Login</th>
+          <th>Kelas</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabel-siswa">
+        <tr class="loading-row"><td colspan="5">⏳ Memuat data siswa...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL TAMBAH/EDIT -->
+<div class="modal-overlay" id="modal-siswa">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-judul">Tambah Siswa Baru</h3>
+      <button class="modal-close" onclick="tutupModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-uid">
+      <div class="field">
+        <label>Nama Lengkap Siswa</label>
+        <input type="text" id="input-nama" placeholder="cth: Budi Santoso" oninput="updateEmailPreview()">
+      </div>
+      <div class="field">
+        <label>Kelas</label>
+        <select id="input-kelas" onchange="updateEmailPreview()">
+          <option value="">-- Pilih Kelas --</option>
+          <option value="1">Kelas 1</option>
+          <option value="2">Kelas 2</option>
+          <option value="3">Kelas 3</option>
+          <option value="4">Kelas 4</option>
+          <option value="5">Kelas 5</option>
+          <option value="6">Kelas 6</option>
+        </select>
+        <div class="email-preview" id="email-preview"></div>
+        <div class="hint" id="hint-email">Email login siswa akan dibuat otomatis dari nama dan kelas.</div>
+      </div>
+      <div class="field" id="field-password">
+        <label>Password</label>
+        <input type="password" id="input-password" placeholder="Minimal 6 karakter">
+        <div class="hint">Siswa akan menggunakan password ini untuk login.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:#F1F5F9;color:var(--muted);" onclick="tutupModal()">Batal</button>
+      <button class="btn btn-primary" id="btn-simpan" onclick="simpanSiswa()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- KONFIRMASI HAPUS -->
+<div class="confirm-overlay" id="confirm-hapus">
+  <div class="confirm-box">
+    <div class="icon">🗑️</div>
+    <h4>Hapus Siswa?</h4>
+    <p>Data <strong id="nama-hapus"></strong> akan dihapus permanen dari Firestore.<br>
+    <small style="color:#EF4444">(Akun Auth perlu dihapus manual di Firebase Console)</small></p>
+    <div class="confirm-btns">
+      <button class="btn" style="background:#F1F5F9;color:var(--muted);" onclick="tutupKonfirmasi()">Batal</button>
+      <button class="btn btn-danger" onclick="konfirmasiHapus()">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { auth, db }           from "../assets/js/firebase-config.js";
+  import { guardAdmin, logout } from "../assets/js/auth.js";
+  import {
+    collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    createUserWithEmailAndPassword, getAuth
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+  guardAdmin();
+  window.doLogout = logout;
+
+  /* ── Secondary Firebase App (untuk buat akun siswa tanpa logout admin) ── */
+  const firebaseConfig = {
+    apiKey:            "AIzaSyBF2ziZnmbIQBrnhXvNhyffSBG5XIpTiUg",
+    authDomain:        "lms-sd.firebaseapp.com",
+    projectId:         "lms-sd",
+    storageBucket:     "lms-sd.firebasestorage.app",
+    messagingSenderId: "224969859267",
+    appId:             "1:224969859267:web:863f9670f923c0154c8276"
+  };
+  const secondaryApp  = initializeApp(firebaseConfig, "secondary");
+  const secondaryAuth = getAuth(secondaryApp);
+
+  /* ── State ── */
+  let semuaSiswa   = [];
+  let kelasFilter  = 0;
+  let cariQuery    = "";
+  let hapusUid     = null;
+
+  /* ── Utilitas ── */
+  function namaKeEmail(nama, kelas) {
+    const bersih = nama.toLowerCase().replace(/\s+/g,"").replace(/[^a-z0-9]/g,"");
+    return `${bersih}.k${kelas}@lms-sd.app`;
+  }
+
+  function toast(msg, type="success") {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast ${type} show`;
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+
+  /* ── Muat data siswa dari Firestore ── */
+  async function muatSiswa() {
+    try {
+      const q    = query(collection(db, "users"), where("role","==","siswa"), orderBy("kelas"), orderBy("nama"));
+      const snap = await getDocs(q);
+      semuaSiswa = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+      renderTabel();
+    } catch(e) {
+      document.getElementById('tabel-siswa').innerHTML =
+        `<tr><td colspan="5" style="text-align:center;padding:30px;color:#EF4444">Gagal memuat data: ${e.message}</td></tr>`;
+    }
+  }
+
+  /* ── Render tabel ── */
+  function renderTabel() {
+    let data = semuaSiswa;
+    if (kelasFilter) data = data.filter(s => s.kelas == kelasFilter);
+    if (cariQuery)   data = data.filter(s => s.nama.toLowerCase().includes(cariQuery.toLowerCase()));
+
+    const lbl = document.getElementById('jumlah-label');
+    lbl.textContent = `Menampilkan ${data.length} dari ${semuaSiswa.length} siswa`;
+
+    const tbody = document.getElementById('tabel-siswa');
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div>👀</div><p>Tidak ada siswa ditemukan</p></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map((s,i) => `
+      <tr>
+        <td style="color:var(--muted);font-weight:700">${i+1}</td>
+        <td><strong>${s.nama}</strong></td>
+        <td><span class="email-text">${namaKeEmail(s.nama, s.kelas)}</span></td>
+        <td><span class="kelas-badge k${s.kelas}">Kelas ${s.kelas}</span></td>
+        <td>
+          <div class="action-btns">
+            <button class="btn btn-edit btn-sm" onclick="window._editSiswa('${s.uid}')">✏️ Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="window._hapusSiswa('${s.uid}','${s.nama.replace(/'/g,"\\'")}')">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  /* ── Filter & Cari ── */
+  window.filterKelas = (btn, kelas) => {
+    document.querySelectorAll('.kelas-filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    kelasFilter = kelas;
+    renderTabel();
+  };
+  window.cariSiswa = (val) => { cariQuery = val; renderTabel(); };
+
+  /* ── Update email preview di modal ── */
+  window.updateEmailPreview = () => {
+    const nama  = document.getElementById('input-nama').value.trim();
+    const kelas = document.getElementById('input-kelas').value;
+    const prev  = document.getElementById('email-preview');
+    if (nama && kelas) {
+      prev.textContent = `📧 ${namaKeEmail(nama, kelas)}`;
+      prev.style.display = 'block';
+    } else {
+      prev.style.display = 'none';
+    }
+  };
+
+  /* ── Buka Modal Tambah ── */
+  window.bukaModalTambah = () => {
+    document.getElementById('modal-judul').textContent  = '➕ Tambah Siswa Baru';
+    document.getElementById('edit-uid').value           = '';
+    document.getElementById('input-nama').value         = '';
+    document.getElementById('input-kelas').value        = '';
+    document.getElementById('input-password').value     = '';
+    document.getElementById('email-preview').style.display = 'none';
+    document.getElementById('field-password').style.display = 'block';
+    document.getElementById('modal-siswa').classList.add('open');
+  };
+
+  /* ── Buka Modal Edit ── */
+  window._editSiswa = (uid) => {
+    const s = semuaSiswa.find(x => x.uid === uid);
+    if (!s) return;
+    document.getElementById('modal-judul').textContent  = '✏️ Edit Data Siswa';
+    document.getElementById('edit-uid').value           = uid;
+    document.getElementById('input-nama').value         = s.nama;
+    document.getElementById('input-kelas').value        = s.kelas;
+    document.getElementById('input-password').value     = '';
+    document.getElementById('field-password').style.display = 'none'; // edit tidak ubah password
+    window.updateEmailPreview();
+    document.getElementById('modal-siswa').classList.add('open');
+  };
+
+  /* ── Tutup Modal ── */
+  window.tutupModal = () => document.getElementById('modal-siswa').classList.remove('open');
+
+  /* ── Simpan (Tambah / Edit) ── */
+  window.simpanSiswa = async () => {
+    const uid      = document.getElementById('edit-uid').value;
+    const nama     = document.getElementById('input-nama').value.trim();
+    const kelas    = parseInt(document.getElementById('input-kelas').value);
+    const password = document.getElementById('input-password').value;
+    const email    = namaKeEmail(nama, kelas);
+
+    if (!nama)  return toast('❌ Nama belum diisi!', 'error');
+    if (!kelas) return toast('❌ Kelas belum dipilih!', 'error');
+
+    const btn = document.getElementById('btn-simpan');
+    btn.disabled = true;
+    btn.textContent = '⏳ Menyimpan...';
+
+    try {
+      if (uid) {
+        // === MODE EDIT — hanya update Firestore ===
+        await updateDoc(doc(db, "users", uid), { nama, kelas });
+        const idx = semuaSiswa.findIndex(s => s.uid === uid);
+        if (idx !== -1) { semuaSiswa[idx].nama = nama; semuaSiswa[idx].kelas = kelas; }
+        toast('✅ Data siswa berhasil diperbarui!');
+      } else {
+        // === MODE TAMBAH — buat akun Auth + Firestore ===
+        if (!password || password.length < 6)
+          return toast('❌ Password minimal 6 karakter!', 'error');
+
+        // Buat akun di Firebase Auth (pakai secondary app agar admin tidak logout)
+        const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+        const newUid = cred.user.uid;
+        await secondaryAuth.signOut(); // logout dari secondary app
+
+        // Simpan data ke Firestore
+        await setDoc(doc(db, "users", newUid), {
+          nama, kelas, email, role: "siswa", poin_total: 0, badge: []
+        });
+        semuaSiswa.push({ uid: newUid, nama, kelas, email, role:"siswa", poin_total:0, badge:[] });
+        toast('✅ Siswa berhasil ditambahkan!');
+      }
+
+      renderTabel();
+      tutupModal();
+    } catch(e) {
+      const pesan = e.code === 'auth/email-already-in-use'
+        ? '❌ Siswa dengan nama & kelas ini sudah terdaftar!'
+        : `❌ Gagal: ${e.message}`;
+      toast(pesan, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '💾 Simpan';
+    }
+  };
+
+  /* ── Hapus Siswa ── */
+  window._hapusSiswa = (uid, nama) => {
+    hapusUid = uid;
+    document.getElementById('nama-hapus').textContent = nama;
+    document.getElementById('confirm-hapus').classList.add('open');
+  };
+  window.tutupKonfirmasi = () => document.getElementById('confirm-hapus').classList.remove('open');
+  window.konfirmasiHapus = async () => {
+    if (!hapusUid) return;
+    try {
+      await deleteDoc(doc(db, "users", hapusUid));
+      semuaSiswa = semuaSiswa.filter(s => s.uid !== hapusUid);
+      renderTabel();
+      toast('🗑️ Data siswa dihapus dari Firestore.');
+      tutupKonfirmasi();
+    } catch(e) {
+      toast('❌ Gagal menghapus: ' + e.message, 'error');
+    }
+    hapusUid = null;
+  };
+
+  // Tutup modal klik di luar
+  document.getElementById('modal-siswa').addEventListener('click', e => {
+    if (e.target.id === 'modal-siswa') tutupModal();
+  });
+
+  muatSiswa();
+</script>
+</body>
+</html>
