@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard — LMS SD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --blue:#3B82F6;--green:#22C55E;--yellow:#F59E0B;--coral:#FF6B6B;--purple:#A855F7;--bg:#EEF6FF;--white:#fff;--text:#1E293B;--muted:#64748B;--border:#E2E8F0; }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; }
+
+    /* TOPBAR */
+    .topbar { background:linear-gradient(135deg,#22C55E,#16A34A); padding:0 24px; height:58px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(34,197,94,.3); }
+    .topbar-left { display:flex; align-items:center; gap:14px; }
+    .topbar a { color:rgba(255,255,255,.8); text-decoration:none; font-size:14px; font-weight:700; }
+    .topbar a:hover { color:#fff; }
+    .topbar h1 { font-family:'Fredoka One',cursive; color:#fff; font-size:20px; }
+    .btn-logout { background:rgba(255,255,255,.2); color:#fff; border:none; padding:7px 16px; border-radius:8px; font-family:'Nunito',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
+
+    /* HERO */
+    .hero { background:linear-gradient(135deg,#F59E0B,#D97706); padding:28px 24px 60px; text-align:center; position:relative; overflow:hidden; }
+    .hero::before { content:'🏆'; position:absolute; font-size:160px; right:-20px; bottom:-20px; opacity:.12; }
+    .hero::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:36px; background:var(--bg); border-radius:36px 36px 0 0; }
+    .hero h2 { font-family:'Fredoka One',cursive; color:#fff; font-size:30px; margin-bottom:6px; position:relative; z-index:1; }
+    .hero p { color:rgba(255,255,255,.85); font-size:14px; font-weight:600; position:relative; z-index:1; }
+    .hero .kelas-tag { display:inline-block; background:rgba(255,255,255,.25); color:#fff; padding:5px 18px; border-radius:20px; font-size:13px; font-weight:800; margin-top:10px; position:relative; z-index:1; }
+
+    /* MY RANK CARD */
+    .my-rank-card { background:linear-gradient(135deg,#FEF9C3,#FEF3C7); border-radius:20px; padding:20px 24px; margin:0 auto 24px; max-width:860px; box-shadow:0 4px 16px rgba(245,158,11,.2); border:2px solid #FDE68A; display:flex; align-items:center; gap:16px; }
+    .my-rank-num { font-family:'Fredoka One',cursive; font-size:42px; color:#92400E; flex-shrink:0; min-width:56px; text-align:center; }
+    .my-rank-info { flex:1; }
+    .my-rank-info .label { font-size:12px; font-weight:700; color:#92400E; margin-bottom:2px; text-transform:uppercase; letter-spacing:.5px; }
+    .my-rank-info .nama { font-family:'Fredoka One',cursive; font-size:20px; color:#92400E; }
+    .my-rank-info .meta { font-size:13px; color:#B45309; font-weight:600; }
+    .my-rank-poin { text-align:right; }
+    .my-rank-poin .pval { font-family:'Fredoka One',cursive; font-size:28px; color:#92400E; }
+    .my-rank-poin .plbl { font-size:12px; color:#B45309; font-weight:700; }
+
+    /* CONTAINER */
+    .container { max-width:860px; margin:0 auto; padding:24px 20px 48px; }
+
+    /* PODIUM */
+    .podium-wrap { display:flex; align-items:flex-end; justify-content:center; gap:10px; margin-bottom:28px; }
+    .podium-item { display:flex; flex-direction:column; align-items:center; flex:1; max-width:200px; }
+    .podium-avatar { font-size:36px; margin-bottom:8px; }
+    .podium-nama { font-family:'Fredoka One',cursive; font-size:14px; color:var(--text); text-align:center; margin-bottom:6px; max-width:130px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .podium-poin { font-size:13px; font-weight:800; color:var(--muted); margin-bottom:6px; }
+    .podium-block { width:100%; border-radius:14px 14px 0 0; display:flex; align-items:center; justify-content:center; padding:12px 0; }
+    .podium-block .rank-num { font-family:'Fredoka One',cursive; font-size:28px; }
+    .pod-1 .podium-block { background:linear-gradient(135deg,#FEF3C7,#FDE68A); height:130px; }
+    .pod-2 .podium-block { background:linear-gradient(135deg,#F1F5F9,#E2E8F0); height:100px; }
+    .pod-3 .podium-block { background:linear-gradient(135deg,#FEF3C7,#FED7AA); height:80px; }
+    .pod-me .podium-nama { color:var(--green); }
+
+    /* LIST */
+    .list-card { background:var(--white); border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.06); overflow:hidden; }
+    .list-header { padding:16px 22px; border-bottom:1.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .list-header h3 { font-family:'Fredoka One',cursive; font-size:18px; color:var(--text); }
+    .list-header span { font-size:13px; color:var(--muted); font-weight:700; }
+    .rank-row { display:flex; align-items:center; gap:14px; padding:14px 22px; border-bottom:1px solid #F1F5F9; transition:.15s; }
+    .rank-row:last-child { border-bottom:none; }
+    .rank-row:hover { background:#FAFCFF; }
+    .rank-row.me { background:linear-gradient(90deg,#F0FDF4,#FAFCFF); border-left:3px solid var(--green); }
+    .rank-num-col { font-family:'Fredoka One',cursive; font-size:20px; min-width:36px; text-align:center; }
+    .r1{color:#F59E0B;} .r2{color:#94A3B8;} .r3{color:#B45309;} .rn{color:var(--muted);}
+    .rank-avatar { font-size:28px; flex-shrink:0; }
+    .rank-info { flex:1; }
+    .rank-info .rname { font-size:15px; font-weight:700; color:var(--text); }
+    .rank-info .rmeta { font-size:12px; color:var(--muted); margin-top:1px; }
+    .rank-info .me-tag { display:inline-block; background:#D1FAE5; color:#065F46; padding:1px 8px; border-radius:20px; font-size:10px; font-weight:800; margin-left:6px; }
+    .rank-poin { font-family:'Fredoka One',cursive; font-size:20px; color:var(--yellow); }
+    .rank-badge-row { display:flex; gap:4px; margin-top:3px; flex-wrap:wrap; }
+    .mini-badge { font-size:14px; }
+
+    /* EMPTY */
+    .empty { text-align:center; padding:48px 20px; color:var(--muted); }
+    .empty div { font-size:48px; margin-bottom:12px; }
+    .empty p { font-size:14px; font-weight:600; }
+
+    /* ANIMASI MASUK */
+    .rank-row { animation:slideIn .3s ease both; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-10px);} to{opacity:1;transform:translateX(0);} }
+
+    @media(max-width:480px) {
+      .container { padding:16px 14px 40px; }
+      .my-rank-card { flex-wrap:wrap; }
+      .podium-wrap { gap:6px; }
+      .podium-nama { font-size:12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="dashboard.html">← Beranda</a>
+    <h1>🏆 Leaderboard</h1>
+  </div>
+  <button class="btn-logout" onclick="doLogout()">Keluar</button>
+</div>
+
+<div class="hero">
+  <h2>🏆 Papan Peringkat</h2>
+  <p>Siapa yang paling rajin belajar hari ini?</p>
+  <div class="kelas-tag" id="kelas-tag">Kelas ...</div>
+</div>
+
+<!-- MY RANK (di luar container, full width feel) -->
+<div style="padding:0 20px;margin-top:24px;">
+  <div class="my-rank-card" id="my-rank-card" style="display:none">
+    <div class="my-rank-num" id="my-rank-num">#–</div>
+    <div class="my-rank-info">
+      <div class="label">📍 Peringkatmu Sekarang</div>
+      <div class="nama" id="my-rank-nama">–</div>
+      <div class="meta" id="my-rank-meta">–</div>
+    </div>
+    <div class="my-rank-poin">
+      <div class="pval" id="my-rank-poin">0</div>
+      <div class="plbl">⭐ Poin</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PODIUM TOP 3 -->
+  <div class="podium-wrap" id="podium"></div>
+
+  <!-- LIST PERINGKAT -->
+  <div class="list-card">
+    <div class="list-header">
+      <h3>🎖️ Semua Peringkat</h3>
+      <span id="list-label">–</span>
+    </div>
+    <div id="rank-list">
+      <div class="empty"><div>⏳</div><p>Memuat peringkat...</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+  import { db }                                     from "../assets/js/firebase-config.js";
+  import { guardSiswa, getCurrentUserData, logout } from "../assets/js/auth.js";
+  import {
+    collection, getDocs, doc, getDoc, query, where
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  guardSiswa();
+  window.doLogout = logout;
+
+  const BADGE_ICON = {
+    'belajar-pertama':'🌱','rajin-belajar':'📚','kutu-buku':'🐛',
+    'kuis-perdana':'✏️','nilai-bagus':'🌟','nilai-sempurna':'💯',
+    'poin-100':'⭐','poin-500':'🌠','konsisten':'🔥','juara-kelas':'🏆'
+  };
+
+  async function init() {
+    const me = await getCurrentUserData();
+    if (!me) return;
+
+    document.getElementById('kelas-tag').textContent = `Kelas ${me.kelas}`;
+
+    // Ambil semua siswa sekelas
+    const sSnap   = await getDocs(query(collection(db,'users'), where('role','==','siswa'), where('kelas','==',me.kelas)));
+    const siswaList = sSnap.docs.map(d=>({uid:d.id,...d.data()}));
+
+    // Ambil progres tiap siswa
+    const withPoin = await Promise.all(siswaList.map(async s => {
+      const pSnap = await getDoc(doc(db,'progres',s.uid));
+      const progres = pSnap.exists() ? pSnap.data() : { poin_total:0, materi_selesai:[], kuis_hasil:{}, badge:[] };
+      return { ...s, poin: progres.poin_total||0, materi: (progres.materi_selesai||[]).length, badge: progres.badge||[] };
+    }));
+
+    // Urutkan berdasarkan poin
+    withPoin.sort((a,b) => b.poin - a.poin || a.nama.localeCompare(b.nama));
+
+    // My rank
+    const myRank = withPoin.findIndex(s=>s.uid===me.uid) + 1;
+    const myData = withPoin.find(s=>s.uid===me.uid);
+    if (myData) {
+      document.getElementById('my-rank-card').style.display = 'flex';
+      document.getElementById('my-rank-num').textContent    = `#${myRank}`;
+      document.getElementById('my-rank-nama').textContent   = myData.nama;
+      document.getElementById('my-rank-meta').textContent   = `${myData.materi} materi selesai • ${myData.badge.length} badge`;
+      document.getElementById('my-rank-poin').textContent   = myData.poin;
+    }
+
+    // Podium top 3
+    renderPodium(withPoin.slice(0,3), me.uid);
+
+    // List
+    renderList(withPoin, me.uid);
+    document.getElementById('list-label').textContent = `${withPoin.length} siswa`;
+  }
+
+  function renderPodium(top3, myUid) {
+    const order  = [1,0,2];   // posisi podium: 2nd, 1st, 3rd
+    const emojis = ['🥇','🥈','🥉'];
+    const AVATARS = ['🧒','👦','👧','🧑','👩','👨'];
+
+    const podium = document.getElementById('podium');
+    if (!top3.length) { podium.style.display='none'; return; }
+
+    const slots = order.map(i => top3[i]).filter(Boolean);
+    // Reorder display: [rank2, rank1, rank3]
+    const display = [];
+    if (top3[1]) display.push({...top3[1], rank:2, emoji:'🥈'});
+    if (top3[0]) display.push({...top3[0], rank:1, emoji:'🥇'});
+    if (top3[2]) display.push({...top3[2], rank:3, emoji:'🥉'});
+
+    podium.innerHTML = display.map(s => {
+      const isMe   = s.uid === myUid;
+      const avatar = AVATARS[Math.abs(s.nama.charCodeAt(0))%AVATARS.length];
+      return `
+      <div class="podium-item pod-${s.rank}${isMe?' pod-me':''}">
+        <div class="podium-avatar">${s.rank===1?'👑':''}</div>
+        <div class="podium-avatar">${avatar}</div>
+        <div class="podium-nama">${s.nama}${isMe?' (Kamu)':''}</div>
+        <div class="podium-poin">⭐ ${s.poin}</div>
+        <div class="podium-block"><span class="rank-num">${s.emoji}</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderList(list, myUid) {
+    const el = document.getElementById('rank-list');
+    if (!list.length) {
+      el.innerHTML = `<div class="empty"><div>👀</div><p>Belum ada siswa di kelas ini</p></div>`;
+      return;
+    }
+
+    const AVATARS = ['🧒','👦','👧','🧑','👩','👨'];
+    el.innerHTML = list.map((s,i) => {
+      const rank    = i+1;
+      const isMe    = s.uid === myUid;
+      const numCls  = rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
+      const numTxt  = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':`#${rank}`;
+      const avatar  = AVATARS[Math.abs(s.nama.charCodeAt(0))%AVATARS.length];
+      const badges  = (s.badge||[]).slice(0,5).map(b=>`<span class="mini-badge">${BADGE_ICON[b]||'🏅'}</span>`).join('');
+
+      return `
+      <div class="rank-row${isMe?' me':''}" style="animation-delay:${i*40}ms">
+        <div class="rank-num-col ${numCls}">${numTxt}</div>
+        <div class="rank-avatar">${avatar}</div>
+        <div class="rank-info">
+          <div class="rname">${s.nama}${isMe?'<span class="me-tag">Kamu</span>':''}</div>
+          <div class="rmeta">${s.materi} materi selesai &nbsp;•&nbsp; ${Object.keys({}).length} kuis</div>
+          <div class="rank-badge-row">${badges}</div>
+        </div>
+        <div class="rank-poin">⭐ ${s.poin}</div>
+      </div>`;
+    }).join('');
+  }
+
+  init();
+</script>
+</body>
+</html>
