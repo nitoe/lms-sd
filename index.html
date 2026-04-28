@@ -8,358 +8,93 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --yellow:  #FFD60A;
-      --blue:    #3B82F6;
-      --blue-dk: #1D4ED8;
-      --green:   #22C55E;
-      --coral:   #FF6B6B;
-      --purple:  #A855F7;
-      --bg:      #EEF6FF;
-      --white:   #FFFFFF;
-      --text:    #1E293B;
-      --muted:   #64748B;
-      --shadow:  0 8px 32px rgba(59,130,246,0.15);
-      --radius:  20px;
+      --yellow:#FFD60A; --blue:#3B82F6; --green:#22C55E;
+      --coral:#FF6B6B; --purple:#A855F7; --bg:#EEF6FF;
+      --white:#FFFFFF; --text:#1E293B; --muted:#64748B;
+      --shadow:0 8px 32px rgba(59,130,246,0.15); --radius:20px;
     }
-
     body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
+      font-family:'Nunito',sans-serif; background:var(--bg);
+      min-height:100vh; display:flex; align-items:center;
+      justify-content:center; overflow:hidden; position:relative;
     }
-
-    /* ── Animated background bubbles ── */
-    .bg-bubbles {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    }
-    .bubble {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.18;
-      animation: float linear infinite;
-    }
-    .bubble:nth-child(1)  { width:120px; height:120px; background:var(--yellow); left:5%;   top:10%; animation-duration:14s; animation-delay:0s; }
-    .bubble:nth-child(2)  { width:80px;  height:80px;  background:var(--coral);  left:20%;  top:70%; animation-duration:11s; animation-delay:2s; }
-    .bubble:nth-child(3)  { width:160px; height:160px; background:var(--blue);   left:70%;  top:5%;  animation-duration:18s; animation-delay:1s; }
-    .bubble:nth-child(4)  { width:60px;  height:60px;  background:var(--green);  left:85%;  top:60%; animation-duration:9s;  animation-delay:4s; }
-    .bubble:nth-child(5)  { width:100px; height:100px; background:var(--purple); left:50%;  top:80%; animation-duration:13s; animation-delay:0.5s; }
-    .bubble:nth-child(6)  { width:50px;  height:50px;  background:var(--yellow); left:90%;  top:30%; animation-duration:10s; animation-delay:3s; }
-    .bubble:nth-child(7)  { width:90px;  height:90px;  background:var(--coral);  left:35%;  top:5%;  animation-duration:16s; animation-delay:1.5s; }
-    @keyframes float {
-      0%   { transform: translateY(0) rotate(0deg); }
-      50%  { transform: translateY(-30px) rotate(180deg); }
-      100% { transform: translateY(0) rotate(360deg); }
-    }
-
-    /* ── Decorative stars ── */
-    .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .star {
-      position: absolute;
-      width: 6px; height: 6px;
-      background: var(--yellow);
-      clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
-      animation: twinkle ease-in-out infinite;
-      opacity: 0.5;
-    }
-    .star:nth-child(1) { left:10%; top:20%; animation-duration:2.5s; }
-    .star:nth-child(2) { left:80%; top:15%; animation-duration:3.2s; animation-delay:0.7s; width:10px; height:10px; }
-    .star:nth-child(3) { left:60%; top:75%; animation-duration:2.8s; animation-delay:1.2s; }
-    .star:nth-child(4) { left:25%; top:85%; animation-duration:3.5s; animation-delay:0.3s; width:8px; height:8px; }
-    .star:nth-child(5) { left:92%; top:50%; animation-duration:2.2s; animation-delay:1.8s; }
-    @keyframes twinkle {
-      0%,100% { opacity:0.5; transform: scale(1); }
-      50%      { opacity:1;   transform: scale(1.4); }
-    }
-
-    /* ── Card ── */
-    .card {
-      position: relative; z-index: 1;
-      background: var(--white);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      width: 100%;
-      max-width: 440px;
-      margin: 20px;
-      overflow: hidden;
-      animation: slideUp 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-    @keyframes slideUp {
-      from { opacity:0; transform: translateY(40px) scale(0.95); }
-      to   { opacity:1; transform: translateY(0) scale(1); }
-    }
-
-    /* ── Card header ── */
-    .card-header {
-      background: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%);
-      padding: 32px 32px 24px;
-      text-align: center;
-      position: relative;
-    }
-    .card-header::after {
-      content: '';
-      position: absolute;
-      bottom: -1px; left: 0; right: 0;
-      height: 24px;
-      background: var(--white);
-      border-radius: 24px 24px 0 0;
-    }
-    .logo {
-      font-family: 'Fredoka One', cursive;
-      font-size: 42px;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-    .card-header h1 {
-      font-family: 'Fredoka One', cursive;
-      color: var(--white);
-      font-size: 22px;
-      letter-spacing: 0.5px;
-    }
-    .card-header p {
-      color: rgba(255,255,255,0.8);
-      font-size: 13px;
-      margin-top: 4px;
-      font-weight: 600;
-    }
-
-    /* ── Tabs ── */
-    .tabs {
-      display: flex;
-      margin: 20px 28px 0;
-      background: #F1F5F9;
-      border-radius: 14px;
-      padding: 4px;
-      gap: 4px;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 10px 0;
-      border: none;
-      border-radius: 11px;
-      background: transparent;
-      font-family: 'Nunito', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .tab-btn.active {
-      background: var(--white);
-      color: var(--text);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .tab-btn .tab-icon { font-size: 18px; }
-
-    /* ── Forms ── */
-    .form-area {
-      padding: 20px 28px 28px;
-    }
-    .form-panel { display: none; animation: fadeIn 0.3s ease; }
-    .form-panel.active { display: block; }
-    @keyframes fadeIn {
-      from { opacity:0; transform: translateX(8px); }
-      to   { opacity:1; transform: translateX(0); }
-    }
-
-    .greeting {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    /* Kelas pilihan (untuk siswa) */
-    .kelas-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-    .kelas-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-    .kelas-btn {
-      aspect-ratio: 1;
-      border: 2.5px solid #E2E8F0;
-      border-radius: 12px;
-      background: #F8FAFC;
-      font-family: 'Fredoka One', cursive;
-      font-size: 18px;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .kelas-btn:hover {
-      border-color: var(--blue);
-      background: #EFF6FF;
-      color: var(--blue);
-      transform: scale(1.08);
-    }
-    .kelas-btn.selected {
-      border-color: var(--blue);
-      background: var(--blue);
-      color: white;
-      transform: scale(1.08);
-      box-shadow: 0 4px 12px rgba(59,130,246,0.35);
-    }
-
-    /* Input fields */
-    .field { margin-bottom: 14px; }
-    .field label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .field input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #E2E8F0;
-      border-radius: 12px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 15px;
-      color: var(--text);
-      background: #F8FAFC;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      outline: none;
-    }
-    .field input:focus {
-      border-color: var(--blue);
-      background: white;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
-    }
-    .field input::placeholder { color: #CBD5E1; }
-
-    /* Login button */
-    .btn-login {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 14px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 18px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      letter-spacing: 0.5px;
-    }
-    .btn-login:hover { transform: translateY(-2px); }
-    .btn-login:active { transform: translateY(0); }
-
-    #btn-siswa {
-      background: linear-gradient(135deg, #22C55E, #16A34A);
-      color: white;
-      box-shadow: 0 4px 16px rgba(34,197,94,0.35);
-    }
-    #btn-siswa:hover { box-shadow: 0 6px 20px rgba(34,197,94,0.45); }
-
-    #btn-admin {
-      background: linear-gradient(135deg, #3B82F6, #6366F1);
-      color: white;
-      box-shadow: 0 4px 16px rgba(59,130,246,0.35);
-    }
-    #btn-admin:hover { box-shadow: 0 6px 20px rgba(59,130,246,0.45); }
-
-    /* Error message */
-    .error-msg {
-      display: none;
-      background: #FEF2F2;
-      border: 1.5px solid #FECACA;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #DC2626;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-    .error-msg.show { display: block; animation: fadeIn 0.2s ease; }
-
-    /* Loading spinner inside button */
-    .spinner {
-      display: none;
-      width: 20px; height: 20px;
-      border: 3px solid rgba(255,255,255,0.4);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Footer note ── */
-    .card-footer {
-      background: #F8FAFC;
-      border-top: 1.5px solid #F1F5F9;
-      padding: 12px 28px;
-      text-align: center;
-      font-size: 12px;
-      color: #94A3B8;
-      font-weight: 600;
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .card { margin: 12px; }
-      .card-header { padding: 24px 24px 18px; }
-      .logo { font-size: 36px; }
-      .form-area { padding: 16px 20px 24px; }
-      .tabs { margin: 16px 20px 0; }
-    }
+    .bg-bubbles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    .bubble{position:absolute;border-radius:50%;opacity:.18;animation:float linear infinite;}
+    .bubble:nth-child(1){width:120px;height:120px;background:var(--yellow);left:5%;top:10%;animation-duration:14s;}
+    .bubble:nth-child(2){width:80px;height:80px;background:var(--coral);left:20%;top:70%;animation-duration:11s;animation-delay:2s;}
+    .bubble:nth-child(3){width:160px;height:160px;background:var(--blue);left:70%;top:5%;animation-duration:18s;animation-delay:1s;}
+    .bubble:nth-child(4){width:60px;height:60px;background:var(--green);left:85%;top:60%;animation-duration:9s;animation-delay:4s;}
+    .bubble:nth-child(5){width:100px;height:100px;background:var(--purple);left:50%;top:80%;animation-duration:13s;animation-delay:.5s;}
+    .bubble:nth-child(6){width:50px;height:50px;background:var(--yellow);left:90%;top:30%;animation-duration:10s;animation-delay:3s;}
+    .bubble:nth-child(7){width:90px;height:90px;background:var(--coral);left:35%;top:5%;animation-duration:16s;animation-delay:1.5s;}
+    @keyframes float{0%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-30px) rotate(180deg);}100%{transform:translateY(0) rotate(360deg);}}
+    .stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    .star{position:absolute;width:6px;height:6px;background:var(--yellow);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:twinkle ease-in-out infinite;opacity:.5;}
+    .star:nth-child(1){left:10%;top:20%;animation-duration:2.5s;}
+    .star:nth-child(2){left:80%;top:15%;animation-duration:3.2s;animation-delay:.7s;width:10px;height:10px;}
+    .star:nth-child(3){left:60%;top:75%;animation-duration:2.8s;animation-delay:1.2s;}
+    .star:nth-child(4){left:25%;top:85%;animation-duration:3.5s;animation-delay:.3s;width:8px;height:8px;}
+    .star:nth-child(5){left:92%;top:50%;animation-duration:2.2s;animation-delay:1.8s;}
+    @keyframes twinkle{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.4);}}
+    .card{position:relative;z-index:1;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);width:100%;max-width:440px;margin:20px;overflow:hidden;animation:slideUp .6s cubic-bezier(.34,1.56,.64,1) both;}
+    @keyframes slideUp{from{opacity:0;transform:translateY(40px) scale(.95);}to{opacity:1;transform:translateY(0) scale(1);}}
+    .card-header{background:linear-gradient(135deg,#3B82F6 0%,#6366F1 100%);padding:32px 32px 24px;text-align:center;position:relative;}
+    .card-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--white);border-radius:24px 24px 0 0;}
+    .logo{font-family:'Fredoka One',cursive;font-size:42px;line-height:1;margin-bottom:4px;}
+    .card-header h1{font-family:'Fredoka One',cursive;color:var(--white);font-size:22px;letter-spacing:.5px;}
+    .card-header p{color:rgba(255,255,255,.8);font-size:13px;margin-top:4px;font-weight:600;}
+    .tabs{display:flex;margin:20px 28px 0;background:#F1F5F9;border-radius:14px;padding:4px;gap:4px;}
+    .tab-btn{flex:1;padding:10px 0;border:none;border-radius:11px;background:transparent;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .25s ease;display:flex;align-items:center;justify-content:center;gap:6px;}
+    .tab-btn.active{background:var(--white);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.1);}
+    .tab-btn .tab-icon{font-size:18px;}
+    .form-area{padding:20px 28px 28px;}
+    .form-panel{display:none;animation:fadeIn .3s ease;}
+    .form-panel.active{display:block;}
+    @keyframes fadeIn{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:translateX(0);}}
+    .greeting{font-size:14px;font-weight:600;color:var(--muted);margin-bottom:16px;text-align:center;}
+    .kelas-label{font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;}
+    .kelas-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:16px;}
+    .kelas-btn{aspect-ratio:1;border:2.5px solid #E2E8F0;border-radius:12px;background:#F8FAFC;font-family:'Fredoka One',cursive;font-size:18px;color:var(--muted);cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;}
+    .kelas-btn:hover{border-color:var(--blue);background:#EFF6FF;color:var(--blue);transform:scale(1.08);}
+    .kelas-btn.selected{border-color:var(--blue);background:var(--blue);color:white;transform:scale(1.08);box-shadow:0 4px 12px rgba(59,130,246,.35);}
+    .field{margin-bottom:14px;}
+    .field label{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+    .field input{width:100%;padding:12px 16px;border:2px solid #E2E8F0;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);background:#F8FAFC;transition:border-color .2s,box-shadow .2s;outline:none;}
+    .field input:focus{border-color:var(--blue);background:white;box-shadow:0 0 0 3px rgba(59,130,246,.12);}
+    .field input::placeholder{color:#CBD5E1;}
+    .btn-login{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Fredoka One',cursive;font-size:18px;cursor:pointer;transition:all .2s ease;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.5px;}
+    .btn-login:hover{transform:translateY(-2px);}
+    .btn-login:active{transform:translateY(0);}
+    .btn-login:disabled{opacity:.7;cursor:not-allowed;transform:none;}
+    #btn-siswa{background:linear-gradient(135deg,#22C55E,#16A34A);color:white;box-shadow:0 4px 16px rgba(34,197,94,.35);}
+    #btn-admin{background:linear-gradient(135deg,#3B82F6,#6366F1);color:white;box-shadow:0 4px 16px rgba(59,130,246,.35);}
+    .error-msg{display:none;background:#FEF2F2;border:1.5px solid #FECACA;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;color:#DC2626;margin-bottom:12px;text-align:center;}
+    .error-msg.show{display:block;animation:fadeIn .2s ease;}
+    .spinner{display:none;width:20px;height:20px;border:3px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .card-footer{background:#F8FAFC;border-top:1.5px solid #F1F5F9;padding:12px 28px;text-align:center;font-size:12px;color:#94A3B8;font-weight:600;}
+    @media(max-width:480px){.card{margin:12px;}.card-header{padding:24px 24px 18px;}.logo{font-size:36px;}.form-area{padding:16px 20px 24px;}.tabs{margin:16px 20px 0;}}
   </style>
 </head>
 <body>
 
-<!-- Background decoration -->
 <div class="bg-bubbles">
-  <div class="bubble"></div>
-  <div class="bubble"></div>
-  <div class="bubble"></div>
-  <div class="bubble"></div>
-  <div class="bubble"></div>
-  <div class="bubble"></div>
-  <div class="bubble"></div>
+  <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+  <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
 </div>
 <div class="stars">
-  <div class="star"></div>
-  <div class="star"></div>
-  <div class="star"></div>
-  <div class="star"></div>
-  <div class="star"></div>
+  <div class="star"></div><div class="star"></div><div class="star"></div>
+  <div class="star"></div><div class="star"></div>
 </div>
 
-<!-- Login Card -->
 <div class="card">
-
-  <!-- Header -->
   <div class="card-header">
     <div class="logo">📚✨</div>
     <h1>Rumah Belajar Kita</h1>
     <p>Platform Belajar Seru untuk Siswa SD</p>
   </div>
 
-  <!-- Tabs -->
   <div class="tabs">
     <button class="tab-btn active" id="tab-siswa" onclick="switchTab('siswa')">
       <span class="tab-icon">🧒</span> Saya Siswa
@@ -369,61 +104,51 @@
     </button>
   </div>
 
-  <!-- Form Area -->
   <div class="form-area">
-
-    <!-- === PANEL SISWA === -->
+    <!-- PANEL SISWA -->
     <div class="form-panel active" id="panel-siswa">
       <p class="greeting">Hai! Pilih dulu kelasmu ya 👇</p>
-
       <div class="kelas-label">Kelas berapa kamu?</div>
       <div class="kelas-grid">
-        <button class="kelas-btn" onclick="pilihKelas(this, 1)">1</button>
-        <button class="kelas-btn" onclick="pilihKelas(this, 2)">2</button>
-        <button class="kelas-btn" onclick="pilihKelas(this, 3)">3</button>
-        <button class="kelas-btn" onclick="pilihKelas(this, 4)">4</button>
-        <button class="kelas-btn" onclick="pilihKelas(this, 5)">5</button>
-        <button class="kelas-btn" onclick="pilihKelas(this, 6)">6</button>
+        <button class="kelas-btn" onclick="pilihKelas(this,1)">1</button>
+        <button class="kelas-btn" onclick="pilihKelas(this,2)">2</button>
+        <button class="kelas-btn" onclick="pilihKelas(this,3)">3</button>
+        <button class="kelas-btn" onclick="pilihKelas(this,4)">4</button>
+        <button class="kelas-btn" onclick="pilihKelas(this,5)">5</button>
+        <button class="kelas-btn" onclick="pilihKelas(this,6)">6</button>
       </div>
-
       <div class="field">
-        <label for="siswa-username">Nama Lengkap atau Nama Panggilan</label>
-        <input type="text" id="siswa-username" placeholder="cth: Budi Santoso" autocomplete="username">
+        <label for="siswa-username">Nama Lengkap</label>
+        <input type="text" id="siswa-username" placeholder="cth: Budi Santoso">
       </div>
       <div class="field">
         <label for="siswa-password">Password</label>
-        <input type="password" id="siswa-password" placeholder="Masukkan password kamu" autocomplete="current-password">
+        <input type="password" id="siswa-password" placeholder="Masukkan password kamu">
       </div>
-
       <div class="error-msg" id="error-siswa"></div>
-
-      <button class="btn-login" id="btn-siswa" onclick="loginSiswa()">
-        <span class="spinner" id="spinner-siswa"></span>
+      <button class="btn-login" id="btn-siswa" onclick="doLoginSiswa()">
+        <div class="spinner" id="spinner-siswa"></div>
         <span id="text-siswa">🚀 Ayo Belajar!</span>
       </button>
     </div>
 
-    <!-- === PANEL ADMIN / GURU === -->
+    <!-- PANEL GURU/ADMIN -->
     <div class="form-panel" id="panel-admin">
       <p class="greeting">Selamat datang, Guru! 🏫</p>
-
       <div class="field">
         <label for="admin-email">Email</label>
-        <input type="email" id="admin-email" placeholder="guru@sekolah.sch.id" autocomplete="username">
+        <input type="email" id="admin-email" placeholder="guru@sekolah.sch.id">
       </div>
       <div class="field">
         <label for="admin-password">Password</label>
-        <input type="password" id="admin-password" placeholder="Masukkan password" autocomplete="current-password">
+        <input type="password" id="admin-password" placeholder="Masukkan password">
       </div>
-
       <div class="error-msg" id="error-admin"></div>
-
-      <button class="btn-login" id="btn-admin" onclick="loginAdmin()">
-        <span class="spinner" id="spinner-admin"></span>
+      <button class="btn-login" id="btn-admin" onclick="doLoginAdmin()">
+        <div class="spinner" id="spinner-admin"></div>
         <span id="text-admin">🔐 Masuk ke Dashboard</span>
       </button>
     </div>
-
   </div>
 
   <div class="card-footer">
@@ -431,15 +156,16 @@
   </div>
 </div>
 
-<!-- ============================================================
-  JAVASCRIPT
-  Catatan: Firebase belum disambungkan. Akan ditambahkan di Fase 1.
-  Script di bawah ini hanya menangani UI (tab switching, validasi).
-============================================================ -->
+<script type="module">
+  import { loginAdmin, loginSiswa } from "./assets/js/auth.js";
+  // Ekspos ke window agar bisa diakses dari script non-module
+  window._loginAdmin = loginAdmin;
+  window._loginSiswa = loginSiswa;
+</script>
+
 <script>
   let selectedKelas = null;
 
-  /* ── Tab switching ── */
   function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
@@ -448,120 +174,82 @@
     clearErrors();
   }
 
-  /* ── Pilih kelas ── */
   function pilihKelas(btn, kelas) {
     document.querySelectorAll('.kelas-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     selectedKelas = kelas;
   }
 
-  /* ── Clear error messages ── */
   function clearErrors() {
-    document.getElementById('error-siswa').classList.remove('show');
-    document.getElementById('error-admin').classList.remove('show');
+    ['siswa','admin'].forEach(p => document.getElementById('error-'+p).classList.remove('show'));
   }
 
-  function showError(panelId, msg) {
-    const el = document.getElementById('error-' + panelId);
+  function showError(panel, msg) {
+    const el = document.getElementById('error-' + panel);
     el.textContent = msg;
     el.classList.add('show');
   }
 
-  /* ── Loading state ── */
-  function setLoading(panel, loading) {
-    const spinner = document.getElementById('spinner-' + panel);
-    const text = document.getElementById('text-' + panel);
-    const btn = document.getElementById('btn-' + panel);
-    spinner.style.display = loading ? 'block' : 'none';
-    text.style.opacity = loading ? '0.6' : '1';
-    btn.disabled = loading;
+  function setLoading(panel, on) {
+    document.getElementById('spinner-' + panel).style.display = on ? 'block' : 'none';
+    document.getElementById('text-'    + panel).style.opacity = on ? '0.6'  : '1';
+    document.getElementById('btn-'     + panel).disabled = on;
   }
 
-  /* ── Login Siswa ── */
-  async function loginSiswa() {
+  async function doLoginSiswa() {
     clearErrors();
-
-    const username = document.getElementById('siswa-username').value.trim();
+    const nama     = document.getElementById('siswa-username').value.trim();
     const password = document.getElementById('siswa-password').value;
 
-    if (!selectedKelas) {
-      return showError('siswa', '😅 Pilih dulu kelas kamu ya!');
-    }
-    if (!username) {
-      return showError('siswa', '😅 Nama kamu belum diisi nih!');
-    }
-    if (!password) {
-      return showError('siswa', '🔒 Password belum diisi!');
-    }
+    if (!selectedKelas) return showError('siswa', '😅 Pilih dulu kelas kamu ya!');
+    if (!nama)          return showError('siswa', '😅 Nama kamu belum diisi nih!');
+    if (!password)      return showError('siswa', '🔒 Password belum diisi!');
+    if (!window._loginSiswa) return showError('siswa', '⏳ Sedang memuat, coba lagi...');
 
     setLoading('siswa', true);
-
     try {
-      // =========================================
-      // TODO Fase 1: Sambungkan ke Firebase Auth
-      // Contoh:
-      // const email = `${username.toLowerCase().replace(/\s+/g,'')}@siswa-sd.app`;
-      // const user = await signInWithEmailAndPassword(auth, email, password);
-      // =========================================
-
-      // Simulasi loading sementara (hapus setelah Firebase tersambung)
-      await new Promise(r => setTimeout(r, 1000));
-      alert(`Halo ${username} dari Kelas ${selectedKelas}! 🎉\n\nFirebase belum disambungkan. Akan aktif di Fase 1!`);
-
+      await window._loginSiswa(nama, selectedKelas, password);
     } catch (err) {
-      showError('siswa', '❌ Login gagal. Coba lagi ya!');
+      const pesan = err.code === 'auth/invalid-credential'
+        ? '❌ Nama atau password salah. Coba lagi ya!'
+        : '❌ Gagal masuk. Minta bantuan gurumu!';
+      showError('siswa', pesan);
     } finally {
       setLoading('siswa', false);
     }
   }
 
-  /* ── Login Admin / Guru ── */
-  async function loginAdmin() {
+  async function doLoginAdmin() {
     clearErrors();
-
-    const email = document.getElementById('admin-email').value.trim();
+    const email    = document.getElementById('admin-email').value.trim();
     const password = document.getElementById('admin-password').value;
 
-    if (!email) {
-      return showError('admin', '📧 Email belum diisi!');
-    }
-    if (!password) {
-      return showError('admin', '🔒 Password belum diisi!');
-    }
-    if (!email.includes('@')) {
-      return showError('admin', '📧 Format email tidak valid!');
-    }
+    if (!email)               return showError('admin', '📧 Email belum diisi!');
+    if (!email.includes('@')) return showError('admin', '📧 Format email tidak valid!');
+    if (!password)            return showError('admin', '🔒 Password belum diisi!');
+    if (!window._loginAdmin)  return showError('admin', '⏳ Sedang memuat, coba lagi...');
 
     setLoading('admin', true);
-
     try {
-      // =========================================
-      // TODO Fase 1: Sambungkan ke Firebase Auth
-      // Contoh:
-      // const user = await signInWithEmailAndPassword(auth, email, password);
-      // if (userRole !== 'admin') throw new Error('Bukan admin');
-      // window.location.href = '/admin/dashboard.html';
-      // =========================================
-
-      // Simulasi loading sementara (hapus setelah Firebase tersambung)
-      await new Promise(r => setTimeout(r, 1000));
-      alert(`Login sebagai: ${email}\n\nFirebase belum disambungkan. Akan aktif di Fase 1!`);
-
+      await window._loginAdmin(email, password);
     } catch (err) {
-      showError('admin', '❌ Email atau password salah!');
+      const pesan = err.message === 'Akun ini bukan admin.'
+        ? '⛔ Akun ini bukan akun guru!'
+        : err.code === 'auth/invalid-credential'
+        ? '❌ Email atau password salah!'
+        : '❌ Gagal masuk. Coba lagi!';
+      showError('admin', pesan);
     } finally {
       setLoading('admin', false);
     }
   }
 
-  /* ── Enter key shortcut ── */
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
-    const activePanelId = document.querySelector('.form-panel.active').id;
-    if (activePanelId === 'panel-siswa') loginSiswa();
-    else loginAdmin();
+    const active = document.querySelector('.form-panel.active').id;
+    if (active === 'panel-siswa') doLoginSiswa();
+    else doLoginAdmin();
   });
 </script>
-
 </body>
 </html>
